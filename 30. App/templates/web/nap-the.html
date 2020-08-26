@@ -1,0 +1,66 @@
+﻿{% extends 'web/base.html' %}
+
+{% block container %}
+   <div class="c-layout-page" style="margin-top: 15px;">
+      <div class="container">
+         <section class="main">
+            <div class="blockContent">
+               <div class=" right-seperate">
+                  <div class="card-game-panel">
+                     <h2 class="panel-title">Đổi thẻ cào</h2>
+                     <p></p>
+                     <p>☘<strong>&nbsp;Cam kết không nuốt thẻ, không làm lag web đối tác khi kết nối API. </strong></p>
+                     <p>☘ Nghiêm cấm&nbsp;sử dụng<strong> thẻ cào trộm cắp, lừa đảo...</strong>&nbsp;nếu sử dụng&nbsp;sẽ khoá tài khoản.</p>
+                     <p>- Trường hợp chọn Sai mệnh giá sẽ chấp nhận theo mệnh giá nhỏ hơn. Và phạt 10% số tiền nhận được</p>
+                     <p></p>
+                     <div class="form-frontpage form-sm" style="margin-top: 30px;">
+                        <h4 style="margin-bottom: 20px;">Form nhập mã thẻ</h4>
+                        <div class="row-group">
+                           <form style="width: 35%; margin: 0 0 25px 26%;">
+                              <div class="form-row">
+                                 <div class="form-group col-md-12">
+                                 <label for="inputState">Loại thẻ</label>
+                                 <select id="inputState" class="form-control">
+                                    <option selected>Chọn...</option>
+                                    <option>Viettel</option>
+                                    <option>Vinaphone</option>
+                                    <option>Mobifone</option>
+                                    <option>Zing</option>
+                                    <option>Vietnamobile</option>
+                                 </select>
+                                 </div>
+                                 <div class="form-group col-md-12">
+                                 <label for="inputState">Mệnh giá</label>
+                                 <select id="inputState" class="form-control">
+                                    <option selected>Chọn...</option>
+                                    <option>10.000đ</option>
+                                    <option>20.000đ</option>
+                                    <option>50.000đ</option>
+                                    <option>100.000đ</option>
+                                    <option>200.000đ</option>
+                                    <option>500.000đ</option>
+                                 </select>
+                                 </div>
+                                 <div class="form-group col-md-12">
+                                    <label for="inputPassword4">Mã thẻ</label>
+                                    <input type="text" class="form-control" id="inputPassword4" required>
+                                 </div>
+                                 <div class="form-group col-md-12">
+                                 <label for="inputAddress">Seri</label>
+                                 <input type="text" class="form-control" id="inputAddress" required>
+                                 </div>
+                              </div>
+                              <button style="margin-left: 33%;" type="submit" class="btn btn-primary">Nạp thẻ</button>
+                              </form>
+                        </div>
+                        <div class="clearfix"></div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </section>
+      </div>
+      <!-- END: PAGE CONTENT -->
+   </div>
+{% endblock %}
+      
