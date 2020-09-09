@@ -85,7 +85,6 @@ input, button, select, textarea {
     outline: medium none;
     padding: 5px;
 }
-
 .btn {
     text-transform: uppercase;
     background: #018EB7; color: #FFF; font-weight: bold; border-radius: 2px; border-bottom: 2px solid #e18f1a; padding: 8px 20px;
