@@ -1,0 +1,141 @@
+﻿{% extends 'web/base.html' %}
+
+{% block container %}
+   <div class="c-layout-page" style="margin-top: 15px;">
+      <div class="container">
+         <div class="row">
+            <div class="col-sm-12">
+               <div class="alert alert-info" role="alert">
+                  <h3 class="alert-heading">Liên Quân Mobile</h3>
+                  <p></p>
+               </div>
+            </div>
+         </div>
+         <div class="row" style="margin-bottom: 15px">
+            <button type="button" class="btn btn-primary btn-lg btn-block" style="display: none;">Tìm kiếm</button>
+            <div class="m-l-10 m-r-10">
+               <form class="form-inline m-b-10" role="form" method="get">
+                  <div class="input-form">
+                     <div class="input-group c-square">
+                        <span class="input-group-addon">Tìm kiếm</span>
+                        <input type="text" class="c-square" value="" placeholder="Tìm kiếm" name="find">
+                     </div>
+                  </div>
+                  <div class="input-form">
+                     <div class="input-group c-square">
+                        <span class="input-group-addon">Giá tiền</span>
+                        <select style="" class="form-control c-square" name="price">
+                           <option value="">Chọn giá tiền</option>
+                           <option value="duoi-50k" >Dưới 50K</option>
+                           <option value="tu-50k-200k" >Từ 50K - 200K</option>
+                           <option value="tu-200k-500k" >Từ 200K - 500K</option>
+                           <option value="tu-500k-1-trieu" >Từ 500K - 1 Triệu</option>
+                           <option value="tren-1-trieu" >Trên 1 Triệu</option>
+                           <option value="tren-5-trieu" >Trên 5 Triệu</option>
+                           <option value="tren-10-trieu" >Trên 10 Triệu</option>
+                        </select>
+                     </div>
+                  </div>
+                  <div class="input-form">
+                     <div class="input-group c-square">
+                        <span class="input-group-addon">Trạng thái</span>
+                        <select style="" class="form-control c-square" name="status">
+                           <option value="1"  selected>Chưa bán</option>
+                           <option value="0" >Đã bán</option>
+                           <option value="3" >Đã đặt cọc</option>
+                           <option value="-999" >Tất cả</option>
+                        </select>
+                     </div>
+                  </div>
+                  <div class="input-form">
+                     <div class="input-group c-square">
+                        <span class="input-group-addon">Đá Quý</span>
+                        <select name="attribute_id_784" class="form-control c-square"
+                           title="-- Không chọn --">
+                           <option value="">-- Không chọn --</option>
+                           <option value="788">Không</option>
+                           <option value="789">Có</option>
+                        </select>
+                     </div>
+                  </div>
+                  <div class="input-form">
+                     <div class="input-group c-square">
+                        <span class="input-group-addon">Rank</span>
+                        <select name="attribute_id_785" class="form-control c-square"
+                           title="-- Không chọn --">
+                           <option value="">-- Không chọn --</option>
+                           <option value="790">Đồng</option>
+                           <option value="791">Bạc</option>
+                           <option value="792">Vàng</option>
+                           <option value="793">Bạch Kim</option>
+                           <option value="794">Kim Cương</option>
+                           <option value="795">Cao thủ</option>
+                           <option value="796">Thách Đấu</option>
+                           <option value="808">Tinh anh</option>
+                        </select>
+                     </div>
+                  </div>
+                  <div class="input-form">
+                     <div class="input-group c-square">
+                        <span class="input-group-addon">Ngọc 90</span>
+                        <select name="attribute_id_811" class="form-control c-square"
+                           title="-- Không chọn --">
+                           <option value="">-- Không chọn --</option>
+                           <option value="797">Không</option>
+                           <option value="798">Có</option>
+                        </select>
+                     </div>
+                  </div>
+                  <div class="input-form" style="margin-left: 40%;">
+                     <button type="button" class="btn btn-outline-primary">Tìm kiếm</button>
+                     <button type="button" class="btn btn-danger">Hủy</button>
+                  </div>
+               </form>
+            </div>
+         </div>
+         <div class="row row-flex  item-list">
+            {% for d in data %}
+            <div class="col-sm-6 col-md-3">
+               <div class="classWithPad" style="background: #fff;">
+                  <div class="image">
+                     <a href="{{ url_for('nick_detail', id=d.id, code=d.code)}}" class="load-modal" rel="/buyacc/405644">
+                        <img src="static/upload-usr/images/tlXKwLd5TB_1589530014.jpg">
+                     </a>
+                  </div>
+                  <div class="attribute_info">
+                     <div class="row"><div class="col-xs-12 a_att"><a href="{{ url_for('nick_detail', id=d.id, code=d.code)}}">{{ d.name }}</a></div></div>
+                     <div class="row">
+                        <div class="col-xs-6 a_att">
+                           Rank: <b style="color: #28a745;">Kim Cương</b>
+                        </div>
+                        <div class="col-xs-6 a_att">
+                           Tướng: <b>63</b>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="a-more">
+                     <div class="row">
+                        <div class="col-xs-6">
+                           <div class="price_item">
+                              {{ d.price }}đ
+                           </div>
+                        </div>
+                        <div class="col-xs-6 ">
+                           <button style="height: 34px; width: 100%;" type="button" class="btn btn-success">Mua</button>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            {% endfor %}
+         <div style="margin-left: 44.5%;">
+            <button type="button" class="btn btn-outline-info">Xem thêm</button>
+         </div>
+         <div class="tab-vertical tutorial_area">
+            <div class="panel-group" id="accordion">
+            </div>
+         </div>
+      </div>
+      <!-- END: PAGE CONTENT -->
+   </div>
+{% endblock %}
