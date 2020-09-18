@@ -222,6 +222,7 @@ def admin():
          # Convert nicks data
          user = session.query(models.Users).filter(models.Users.id == nick.user_id).first()
          data = {
+            "id": nick.id,
             "code": nick.code,
             "name": nick.name,
             "game_name": nick.game_name,
@@ -243,7 +244,16 @@ def admin():
             enduser.append(user)
          
          # Convert users data
-         user = session.query(models.History).filter(models.History.user_id == user.id).all()
+         list_request = session.query(models.History).filter(models.History.user_id == user.id).all()
+         list_nick = session.query(models.Nicks).filter(models.Nicks.user_id == user.id).first()
+         data = {
+            "id": user.id,
+            "name": user.name,
+            "ctv": user.ctv,
+            "nick_sale": len(list_nick),
+            "money": user.money,
+            "request": len(list_request)
+         }
       return render_template(
          'admin/admin.html',
          nicks=nicks,
