@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700">
-<title>Bootstrap Sign up Form Horizontal</title>
+<title>GameTongHop-VN</title>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -89,44 +89,56 @@ body {
 </head>
 <body>
 <div class="signup-form">
-    <form action="/examples/actions/confirmation.php" method="post" class="form-horizontal">
+    <form method="post" role="form" action="{{url_for('sign_up_process')}}">
       	<div class="row">
         	<div class="col-8 offset-4">
-				<h2>Sign Up</h2>
+				<h2>Đăng ký</h2>
 			</div>	
-      	</div>			
+		</div>
+		{% with messages = get_flashed_messages() %}
+			{% if messages %}
+			{% for message in messages %}
+				<div class="alert alert-warning alert-dismissible" role="alert">
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+				{{message}}
+				</div>
+			{% endfor %}
+			{% endif %}
+		{% endwith %}
+		
+		{% block body %}{% endblock %}	
         <div class="form-group row">
-			<label class="col-form-label col-4">Username</label>
+			<label class="col-form-label col-4">Tên người dùng</label>
 			<div class="col-8">
-                <input type="text" class="form-control" name="username" required="required">
+                <input type="text" class="form-control" name="name" required="required">
             </div>        	
         </div>
 		<div class="form-group row">
-			<label class="col-form-label col-4">Email Address</label>
+			<label class="col-form-label col-4">Tài khoản</label>
 			<div class="col-8">
-                <input type="email" class="form-control" name="email" required="required">
+                <input type="text" class="form-control" name="account" required="required">
             </div>        	
         </div>
 		<div class="form-group row">
-			<label class="col-form-label col-4">Password</label>
+			<label class="col-form-label col-4">Mật khẩu</label>
 			<div class="col-8">
                 <input type="password" class="form-control" name="password" required="required">
             </div>        	
         </div>
 		<div class="form-group row">
-			<label class="col-form-label col-4">Confirm Password</label>
+			<label class="col-form-label col-4">Xác nhận mật khẩu</label>
 			<div class="col-8">
                 <input type="password" class="form-control" name="confirm_password" required="required">
             </div>        	
         </div>
 		<div class="form-group row">
 			<div class="col-8 offset-4">
-				<p><label class="form-check-label"><input type="checkbox" required="required"> I accept the <a href="#">Terms of Use</a> &amp; <a href="#">Privacy Policy</a>.</label></p>
-				<button type="submit" class="btn btn-primary btn-lg">Sign Up</button>
+				<button type="submit" class="btn btn-primary btn-lg">Xác nhận</button>
 			</div>  
 		</div>		      
-    </form>
-	<div class="text-center">Already have an account? <a href="#">Login here</a></div>
+	</form>
+	
+	<div class="text-center">Bạn đã có tài khoản? <a href="{{ url_for('login')}}">Đăng nhập</a></div>
 </div>
 </body>
 </html>

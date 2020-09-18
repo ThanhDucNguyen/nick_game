@@ -18,20 +18,16 @@
                                  <div class="info-block" style="font-size: 17px;">
                                     <ul>
                                        <li>
-                                          <h1 itemprop="name">Nguyễn Văn A</h1>
-                                       </li>
-                                       <li>
-                                          <span>Đang bán <span style="color: #FF0000;">3</span> nick !!!</span>
+                                          <h1 itemprop="name">{{ current_user.name }}</h1>
                                        </li>
                                        <li class="price-big"  style="margin-top: 25px;">
                                           <ul class="list_attribute">
-                                             <li style="margin-top: 10px;">Số tiền trong tài khoản: <span style="font-size: 20px; color: #f42f2c;">500.000<span style="color: green;"> VND</span></li>
-                                             <li><button type="button" class="btn btn-success">Rút tiền</button></li>
+                                             <li style="margin-top: 10px;">Số tiền trong tài khoản: <span style="font-size: 20px; color: #f42f2c;">{{ current_user.money }}<span style="color: green;"> VND</span></li>
                                           </ul>
                                        </li>
                                        <li>
                                           <ul class="list_attribute">
-                                             <li><button type="button" class="btn btn-primary">Hướng dẫn rút tiền</button></li>
+                                             <li><button type="button" class="btn btn-primary">Hướng dẫn mua nick</button></li>
                                              <li style="margin-top: 10px;">
                                                    <a href="#"><p style="color: #dc3545;">Liên hệ fanpage để được tư vấn!</p></a>
                                              </li>
@@ -56,7 +52,7 @@
          </div>
          <div class="row">
             <div class="col-sm-12">
-               <button type="button" id="banNickModal" style="margin: 0 0 10px 45%;" class="btn btn-outline-success">Đăng ký bán nick</button>
+               <!-- <button type="button" id="banNickModal" style="margin: 0 0 10px 45%;" class="btn btn-outline-success">Đăng ký bán nick</button> -->
                <div id="myModal" class="modal">
                   <!-- Modal content -->
                   <div class="modal-content">
@@ -132,27 +128,31 @@
          <table class="table" id="table_id">
             <thead class="thead-light">
                <tr>
-                  <th scope="col">Mã giao dịch</th>
-                  <th scope="col">Tên</th>
-                  <th scope="col">Game</th>
-                  <th scope="col">Giá</th>
-                  <th scope="col">Trạng thái</th>
+                  <th scope="col">#</th>
+                  <th scope="col">Giao dịch</th>
+                  <th scope="col">Tiền</th>
+                  <th scope="col">Thông tin</th>
+                  <th scope="col">Trạng thái giao dịch</th>
                </tr>
             </thead>
             <tbody>
-               {% for d in data %}
+               {% for i in range(0, data|length) %}
                <tr>
-                  <td style="font-weight: bold;">{{ d.code }}</td>
-                  <td><a>{{ d.name }}</a></td>
-                  <td>{{ d.game_name }}</td>
-                  <td><b>{{ d.price }}đ</b></td>
-                  {% if d.status == 'Confirm' %}
-                     <td style="color: #f42f2c;">Đợi hệ thống xác nhận</td>
-                  {% elif d.status == 'Đang bán' %}
-                     <td style="color: blue;">Đang bán</td>
+                  <td style="font-weight: bold;">{{ i }}</td>
+                  <td><a>{{ 'Nạp tiền' if data[i].card else 'Mua nick' }}</a></td>
+
+                  {% if data[i].card %}
+                  <td style="color: #28a745;">{{ data[i].info['price'] }}</td>
                   {% else %}
-                     <td style="color: #28a745;">Đã bán</td>
+                  <td style="color: #f42f2c;">{{ data[i].info['price'] }}</td>
                   {% endif %}
+
+                  {% if data[i].card %}
+                  <td style="font-weight: 500;">{{ data[i].info['type'] }}</td>
+                  {% else %}
+                  <td style="font-weight: 500;">{{ data[i].info['game_code'] }}</td>
+                  {% endif %}
+                  <td  style="color: #28a745;">Đã giao dịch</td>
                </tr>
                {% endfor %}
             </tbody>
@@ -245,5 +245,5 @@
             $("#myModal").hide();
          });
       });
-    </script>
+   </script>
 {% endblock %}

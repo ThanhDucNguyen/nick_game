@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Bootstrap Sign in Form with Circular Social Buttons</title>
+<title>GameTongHop-VN</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -129,15 +129,22 @@ body {
 </head>
 <body>
 <div class="signin-form">
-    <form action="/examples/actions/confirmation.php" method="post">
+    <form method="post" role="form" action="{{url_for('login_process')}}">
 		<h2>Sign in</h2>
         <p class="hint-text">Sign in with your social media account</p>
-		<div class="social-btn text-center">
-			<a href="{{ url_for('login_fb')}}" class="btn btn-primary btn-lg" title="Facebook"><i class="fa fa-facebook"></i></a>
-			<a href="#" class="btn btn-info btn-lg" title="Twitter"><i class="fa fa-twitter"></i></a>
-			<a href="#" class="btn btn-danger btn-lg" title="Google"><i class="fa fa-google"></i></a>
-		</div>
 		<div class="or-seperator"><b>or</b></div>
+		{% with messages = get_flashed_messages() %}
+			{% if messages %}
+			{% for message in messages %}
+				<div class="alert alert-warning alert-dismissible" role="alert">
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+				{{message}}
+				</div>
+			{% endfor %}
+			{% endif %}
+		{% endwith %}
+		
+		{% block body %}{% endblock %}
         <div class="form-group">
         	<input type="text" class="form-control input-lg" name="username" placeholder="Username" required="required">
         </div>
@@ -147,9 +154,9 @@ body {
         <div class="form-group">
             <button type="submit" class="btn btn-success btn-lg btn-block signin-btn">Sign in</button>
         </div>
-        <div class="text-center small"><a href="#">Forgot Your password?</a></div>
+        <div class="text-center small"><a href="#">Quên mật khẩu?</a></div>
     </form>
-    <div class="text-center small">Don't have an account? <a href="#">Sign up</a></div>
+    <div class="text-center small">Bạn chưa có tài khoản? <a href="{{ url_for('sign_up')}}">Đăng ký</a></div>
 </div>
 </body>
 </html>

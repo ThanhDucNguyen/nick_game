@@ -5,10 +5,14 @@ from sqlalchemy import *
 import models.config as models
 import datetime
 import json
+from flask_login import LoginManager, login_required, logout_user, current_user, login_user
 
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
-user_id = 873246
+user_id = 3
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
 
 @app.route('/')
 def index():
@@ -17,20 +21,46 @@ def index():
    return render_template(
       'web/index.html',
       data_lq=data_lq,
-      data_nr=data_nr
+      data_nr=data_nr,
+      user=current_user
    )
 
 @app.route('/list-nick')
 def list_nick():
    game_name = request.args.get("game", None)
+   price = request.args.get("price", None)
+   code = request.args.get("find", None)
    page_size = 12
+   
    if game_name:
-      data = session.query(models.Nicks).filter(models.Nicks.game_name == game_name, models.Nicks.status == 'Đang bán').limit(page_size).all()
+      data = session.query(models.Nicks).filter(models.Nicks.game_name == game_name, models.Nicks.status == 'Đang bán')
    else:
-      data = session.query(models.Nicks).filter(models.Nicks.status == 'Đang bán').limit(page_size).all()
+      data = session.query(models.Nicks).filter(models.Nicks.status == 'Đang bán')
+   
+   if code:
+      data = data.filter(models.Nicks.code == code)
+
+   if price:
+      price_cv = list(price.split(","))
+      price1 = None
+      price2 = None
+      if len(price_cv) > 1:
+         price1 = int(price_cv[0])
+         price2 = int(price_cv[1])
+         data = data.filter(models.Nicks.price > price1)
+         data = data.filter(models.Nicks.price <= price2)
+      elif int(price) == 1000000:
+         data = data.filter(models.Nicks.price > int(price))
+      else:
+         data = data.filter(models.Nicks.price <= int(price))
+   data = data.limit(page_size)
+   data = data.all()
    return render_template(
       'web/list.html',
-      data=data
+      data=data,
+      game_name=game_name,
+      price=price,
+      code=code
    )
 
 @app.route('/nick-detail')
@@ -54,21 +84,156 @@ def support():
 @app.route('/profile')
 def profile():
    page_size = 12
-   data = session.query(models.Nicks).filter(models.Nicks.user_id == user_id).all()
+   data_qr = session.query(models.History).filter(models.History.user_id == user_id).all()
+   data = []
+   for d in data_qr:
+      rd = {
+         "id": d.id,
+         "card": d.card,
+         "buy": d.buy,
+         "info": json.loads(d.info),
+      }
+      data.append(rd)
    return render_template(
       'web/profile.html',
       data=data
    )
 
+# ================= Login ================= #
+
+@app.route('/sign_up')
+def sign_up():
+   return render_template('web/sign_up.html')
+
+@app.route('/sign_up', methods=['POST'])
+def sign_up_process():
+   try:
+      name = request.form.get("name")
+      account = request.form.get("account")
+      password = request.form.get("password")
+      confirm_password = request.form.get("confirm_password")
+      user = session.query(models.Users).filter(
+         models.Users.account_tk == account).first()
+      if user:
+         flash('Tên tài khoản đã tồn tại')
+         return redirect("/sign_up")
+      user = models.Users()
+      user.name = name
+      user.account_tk = account
+      user.super = False
+      user.ctv = False
+      user.enduser = True
+      user.create_at = str(datetime.datetime.now())
+      user.password = password
+      user.money = 0
+      session.add(user)
+      session.commit()
+      session.close()
+      flash('Tạo tài khoản "'+ name +'" thành công!')
+   except Exception as e:
+      flash('Hệ thống lỗi, nhờ báo cáo sự cố với bộ phận kỹ thuật.')
+      return redirect("/sign_up")
+   return redirect("/login")
+
 @app.route('/login')
 def login():
    return render_template('web/login.html')
 
-@app.route('/login_fb')
-def login_fb():
-   return render_template('web/login_fb.html')
+@login_manager.user_loader
+def load_user(user_id):
+   return session.query(models.Users).filter(
+      models.Users.id == user_id).first()
+
+@app.route('/login', methods=['POST'])
+def login_process():
+   try:
+      username = request.form.get("username")
+      password = request.form.get("password")
+      user = session.query(models.Users).filter(
+         models.Users.account_tk == username,
+         models.Users.password == password).first()
+      if user:
+         login_user(user)
+      else:
+         flash('Mật khẩu không chính xác')
+         return redirect("/login")
+   except Exception as e:
+      flash('Hệ thống lỗi, nhờ báo cáo sự cố với bộ phận kỹ thuật.')
+      return redirect("/login")
+   return redirect("/")
+
+@app.route("/logout")
+def logout():
+   logout_user()
+   return redirect('/')
 
 # ================= Web admin ================= #
+def checkPermisson():
+   if current_user.super:
+      return 'admin'
+   elif current_user.ctv:
+      return 'ctv'
+   else:
+      return False
+
+@app.route('/login-admin')
+def login_admin():
+   return render_template('admin/login.html')
+
+@app.route('/login-admin', methods=['POST'])
+def login_admin_process():
+   try:
+      username = request.form.get("username")
+      password = request.form.get("password")
+      user = session.query(models.Users).filter(
+         models.Users.account_tk == username,
+         models.Users.password == password).first()
+      if user:
+         login_user(user)
+         per = checkPermisson()
+         if not per:
+            logout_user()
+            return redirect("/")
+      else:
+         flash('Mật khẩu không chính xác')
+         return redirect("/login-admin")
+   except Exception as e:
+      flash('Hệ thống lỗi, nhờ báo cáo sự cố với bộ phận kỹ thuật.')
+      return redirect("/login-admin")
+   return redirect("/admin")
+
+@app.route('/admin')
+@login_required
+def admin():
+   per = checkPermisson()
+   if per:
+      nicks = session.query(models.Nicks).all()
+      sold = []
+      on_sale = []
+      for nick in nicks:
+         if nick.status == 'Đang bán':
+            on_sale.append(nicks)
+         if nick.status == 'Đã bán':
+            sold.append(nicks)
+      users = session.query(models.Users).filter(models.Users.super == False).all()
+      ctv = []
+      enduser = []
+      for user in users:
+         if user.ctv:
+            ctv.append(user)
+         if user.enduser:
+            enduser.append(user)
+      flash(sold)
+      flash(nicks)
+      return render_template(
+         'admin/admin.html',
+         nicks=nicks,
+         sold=sold,
+         ctv=ctv,
+         enduser=enduser)
+   else:
+      return redirect("/")
+
 
 @app.route('/add-nick', methods=['POST'])
 def add_nick():

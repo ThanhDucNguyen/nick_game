@@ -145,17 +145,20 @@
                             </li>
                             <li><a href="{{ url_for('recharge_card')}}">Nạp tiền</a></li>
                             <li><a href="{{ url_for('support')}}">Hướng dẫn</a></li>
-                            <!-- <li>
-                               <a href="#" style="color: #00FF00;">Đăng nhập</a> | <a href="#">Đăng ký</a>
-                            </li> -->
-                            <li style="color: #FF004F;">------ 500,000đ</li>
-                            <li class="menu-has-children"><a href="{{ url_for('profile')}}" style="text-transform: lowercase; color: #28a745;">
-                                ntduc2812@gmail.com ------</a>
+                            {% if current_user.id %}
+                            <li style="color: #FF004F;">------ {{ current_user.money }}đ</li>
+                            <li class="menu-has-children"><a href="{{ url_for('profile')}}" style="text-transform: none; color: #28a745;">
+                                {{ current_user.name }} ------</a>
                                 <ul>
                                     <li><a href="{{ url_for('profile')}}">Thông tin cá nhân</a></li>
-                                    <li><a href="">Thoát</a></li>
+                                    <li><a href="{{ url_for('logout')}}">Thoát</a></li>
                                 </ul>
                             </li>
+                            {% else %}
+                            <li>
+                               <a href="{{ url_for('login')}}" style="color: #00FF00;">Đăng nhập</a> | <a href="{{ url_for('sign_up')}}">Đăng ký</a>
+                            </li>
+                            {% endif %}
                         </ul>
                     </nav>
                 </div>
