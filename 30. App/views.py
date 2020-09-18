@@ -207,28 +207,49 @@ def login_admin_process():
 def admin():
    per = checkPermisson()
    if per:
-      nicks = session.query(models.Nicks).all()
+      nicks_qr = session.query(models.Nicks).all()
+
+      # Get info nicks
       sold = []
       on_sale = []
-      for nick in nicks:
+      nicks = []
+      for nick in nicks_qr:
          if nick.status == 'Đang bán':
-            on_sale.append(nicks)
+            on_sale.append(nick)
          if nick.status == 'Đã bán':
-            sold.append(nicks)
-      users = session.query(models.Users).filter(models.Users.super == False).all()
+            sold.append(nick)
+
+         # Convert nicks data
+         user = session.query(models.Users).filter(models.Users.id == nick.user_id).first()
+         data = {
+            "code": nick.code,
+            "name": nick.name,
+            "game_name": nick.game_name,
+            "price": nick.price,
+            "user": { "name": user.name, "id": user.id },
+            "status": nick.status
+         }
+         nicks.append(data)
+
+      # Get info users
       ctv = []
       enduser = []
-      for user in users:
+      users = []
+      users_qr = session.query(models.Users).filter(models.Users.super == False).all()
+      for user in users_qr:
          if user.ctv:
             ctv.append(user)
          if user.enduser:
             enduser.append(user)
-      flash(sold)
-      flash(nicks)
+         
+         # Convert users data
+         user = session.query(models.History).filter(models.History.user_id == user.id).all()
       return render_template(
          'admin/admin.html',
          nicks=nicks,
+         users=users,
          sold=sold,
+         on_sale=on_sale,
          ctv=ctv,
          enduser=enduser)
    else:

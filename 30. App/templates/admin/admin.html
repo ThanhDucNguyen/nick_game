@@ -77,9 +77,7 @@
 
               <div class="info-box-content">
                 <span class="info-box-text"><a href="#" style="color: #212529;">CTV</a></span>
-                <span class="info-box-number">
-                  10
-                </span>
+                <span class="info-box-number">{{ ctv | length }}</span>
               </div>
               <!-- /.info-box-content -->
             </div>
@@ -88,11 +86,10 @@
           <!-- /.col -->
           <div class="col-12 col-sm-6 col-md-3">
             <div class="info-box mb-3">
-              <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-thumbs-up"></i></span>
-
+              <span class="info-box-icon bg-success elevation-1"><i class="fas fa-shopping-cart"></i></span>
               <div class="info-box-content">
                 <span class="info-box-text">Nick đang bán</span>
-                <span class="info-box-number">41,410</span>
+                <span class="info-box-number">{{ on_sale | length }}</span>
               </div>
               <!-- /.info-box-content -->
             </div>
@@ -105,11 +102,10 @@
 
           <div class="col-12 col-sm-6 col-md-3">
             <div class="info-box mb-3">
-              <span class="info-box-icon bg-success elevation-1"><i class="fas fa-shopping-cart"></i></span>
-
+              <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-thumbs-up"></i></span>
               <div class="info-box-content">
                 <span class="info-box-text">Nick đã bán</span>
-                <span class="info-box-number">760</span>
+                <span class="info-box-number">{{ sold | length }}</span>
               </div>
               <!-- /.info-box-content -->
             </div>
@@ -119,10 +115,9 @@
           <div class="col-12 col-sm-6 col-md-3">
             <div class="info-box mb-3">
               <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
-
               <div class="info-box-content">
                 <span class="info-box-text">Số lượng người dùng</span>
-                <span class="info-box-number">2,000</span>
+                <span class="info-box-number">{{ enduser | length }}</span>
               </div>
               <!-- /.info-box-content -->
             </div>
@@ -133,7 +128,7 @@
         <!-- Main row -->
         <div class="row">
           <!-- Left col -->
-          <div class="col-md-8">
+          <div class="col-md-12">
             <!-- TABLE: LATEST ORDERS -->
             <div class="card">
               <div class="card-header border-transparent">
@@ -160,105 +155,28 @@
                         <th>price</th>
                         <th>user</th>
                         <th>status</th>
+                        <th style="text-align: center;">Option</th>
                       </tr>
                     </thead>
                     <tbody>
+                      {% for nick in nicks %}
                       <tr>
-                        <td>1</td>
-                        <td><a href="#">Bán nick game giá rẻ</a></td>
-                        <td>Liên Quân</td>
-                        <td>100.000<span> Đ</span></td>
-                        <td><a href="#">Thành Đức</a></td>
-                        <td><span class="badge badge-success">Đã bán</span></td>
+                        <td><a href="#">{{ nick.code }}</a></td>
+                        <td>{{ nick.name }}</td>
+                        <td style="font-weight: 600; color: green;">{{ nick.game_name }}</td>
+                        <td>{{ nick.price }}<span> vnd</span></td>
+                        <td><a href="#">{{ nick.user["name"] }}</a></td>
+                        {% if nick.status=="Đã bán" %}
+                          <td><span class="badge badge-success">Đã bán</span></td>
+                        {% elif nick.status=="Đang bán" %}
+                          <td><span class="badge badge-success">Đang bán</span></td>
+                        {% endif %}
+                        <td style="text-align: center;">
+                          <a href="#" class="btn btn-warning">Edit</a>
+                          <a href="#" class="btn btn-danger">Delete</a>
+                        </td>
                       </tr>
-                      <tr>
-                        <td>2</td>
-                        <td><a href="#">Bán nick game giá rẻ</a></td>
-                        <td>Liên Quân</td>
-                        <td>100.000<span> Đ</span></td>
-                        <td><a href="#">Thành Đức</a></td>
-                        <td><span class="badge badge-warning">Tạm dừng</span></td>
-                      </tr>
-                      <tr>
-                        <td>3</td>
-                        <td><a href="#">Bán nick game giá rẻ</a></td>
-                        <td>Liên Quân</td>
-                        <td>100.000<span> Đ</span></td>
-                        <td><a href="#">Thành Đức</a></td>
-                        <td><span class="badge badge-info">Đang bán</span></td>
-                      </tr>
-                      <tr>
-                        <td>4</td>
-                        <td><a href="#">Bán nick game giá rẻ</a></td>
-                        <td>Liên Quân</td>
-                        <td>100.000<span> Đ</span></td>
-                        <td><a href="#">Thành Đức</a></td>
-                        <td><span class="badge badge-danger">Error</span></td>
-                      </tr>
-                      <tr>
-                        <td>1</td>
-                        <td><a href="#">Bán nick game giá rẻ</a></td>
-                        <td>Liên Quân</td>
-                        <td>100.000<span> Đ</span></td>
-                        <td><a href="#">Thành Đức</a></td>
-                        <td><span class="badge badge-success">Đã bán</span></td>
-                      </tr>
-                      <tr>
-                        <td>2</td>
-                        <td><a href="#">Bán nick game giá rẻ</a></td>
-                        <td>Liên Quân</td>
-                        <td>100.000<span> Đ</span></td>
-                        <td><a href="#">Thành Đức</a></td>
-                        <td><span class="badge badge-warning">Tạm dừng</span></td>
-                      </tr>
-                      <tr>
-                        <td>3</td>
-                        <td><a href="#">Bán nick game giá rẻ</a></td>
-                        <td>Liên Quân</td>
-                        <td>100.000<span> Đ</span></td>
-                        <td><a href="#">Thành Đức</a></td>
-                        <td><span class="badge badge-info">Đang bán</span></td>
-                      </tr>
-                      <tr>
-                        <td>4</td>
-                        <td><a href="#">Bán nick game giá rẻ</a></td>
-                        <td>Liên Quân</td>
-                        <td>100.000<span> Đ</span></td>
-                        <td><a href="#">Thành Đức</a></td>
-                        <td><span class="badge badge-danger">Error</span></td>
-                      </tr>
-                      <tr>
-                        <td>1</td>
-                        <td><a href="#">Bán nick game giá rẻ</a></td>
-                        <td>Liên Quân</td>
-                        <td>100.000<span> Đ</span></td>
-                        <td><a href="#">Thành Đức</a></td>
-                        <td><span class="badge badge-success">Đã bán</span></td>
-                      </tr>
-                      <tr>
-                        <td>2</td>
-                        <td><a href="#">Bán nick game giá rẻ</a></td>
-                        <td>Liên Quân</td>
-                        <td>100.000<span> Đ</span></td>
-                        <td><a href="#">Thành Đức</a></td>
-                        <td><span class="badge badge-warning">Tạm dừng</span></td>
-                      </tr>
-                      <tr>
-                        <td>3</td>
-                        <td><a href="#">Bán nick game giá rẻ</a></td>
-                        <td>Liên Quân</td>
-                        <td>100.000<span> Đ</span></td>
-                        <td><a href="#">Thành Đức</a></td>
-                        <td><span class="badge badge-info">Đang bán</span></td>
-                      </tr>
-                      <tr>
-                        <td>4</td>
-                        <td><a href="#">Bán nick game giá rẻ</a></td>
-                        <td>Liên Quân</td>
-                        <td>100.000<span> Đ</span></td>
-                        <td><a href="#">Thành Đức</a></td>
-                        <td><span class="badge badge-danger">Error</span></td>
-                      </tr>
+                      {% endfor %}
                     </tbody>
                   </table>
                 </div>
@@ -268,13 +186,13 @@
             </div>
             <!-- /.card -->
           </div>
-          <!-- /.col -->
-
-          <div class="col-md-4">
+        </div>
+        <div class="row">
+          <div class="col-md-12">
             <!-- PRODUCT LIST -->
             <div class="card">
               <div class="card-header border-0">
-                <h3 class="card-title">User CTV</h3>
+                <h3 class="card-title">Danh sách user</h3>
                 <div class="card-tools">
                   <a href="#" class="btn btn-tool btn-sm">
                     <i class="fas fa-download"></i>
@@ -289,24 +207,30 @@
                   <thead>
                   <tr>
                     <th>Name</th>
-                    <th>Nicks</th>
+                    <th>Type</th>
+                    <th>Nicks Sale</th>
                     <th>Money</th>
                     <th>Request</th>
                     <th>Status</th>
                   </tr>
                   </thead>
                   <tbody>
+                  {% for user in users %}
                   <tr>
-                    <td>
-                      Thành Đức
-                    </td>
+                    <td>{{ user.name }}</td>
+                    {% if user.ctv %}
+                    <td>CTV</td>
+                    {% else %}
+                    <td style="padding-left: 22px;"> - </td>
+                    {% endif %}
                     <td>5</td>
-                    <td>100.000<span> Đ</span></td>
+                    <td>{{ user.money }}<span> VND</span></td>
                     <td>
                       <span class="badge bg-danger"><span>1</span> Request</span>
                     </td>
                     <td><span class="badge badge-success">Hoạt động</span></td>
                   </tr>
+                  {% endfor %}
                   <tr>
                     <td>
                       Xuân Tú
@@ -346,7 +270,6 @@
             </div>
             <!-- /.card -->
           </div>
-          <!-- /.col -->
         </div>
         <!-- /.row -->
       </div><!--/. container-fluid -->
