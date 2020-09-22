@@ -43,6 +43,7 @@ class History(db.Model):
     buy = db.Column(db.Boolean)
     info = db.Column(db.String(2000))
     user_id = db.Column(db.Integer)
+    status = db.Column(db.String(150))
 
 class Users(db.Model):
     __tablename__ = 'users'

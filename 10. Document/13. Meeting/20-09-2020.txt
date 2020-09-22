@@ -1,0 +1,4 @@
+1. Quy trình mua nick
+- Mua -> Accept tiền -> Check nick bằng selenium -> Thực hiện mua
+
+2. Tách ra làm 2 bảng user riêng

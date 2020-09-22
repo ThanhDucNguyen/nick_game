@@ -244,8 +244,9 @@ def admin():
             enduser.append(user)
          
          # Convert users data
-         list_request = session.query(models.History).filter(models.History.user_id == user.id).all()
-         list_nick = session.query(models.Nicks).filter(models.Nicks.user_id == user.id).first()
+         list_request = session.query(models.History).filter(
+            models.History.user_id == user.id, models.History.status == "Confirm").all()
+         list_nick = session.query(models.Nicks).filter(models.Nicks.user_id == user.id).all()
          data = {
             "id": user.id,
             "name": user.name,
@@ -257,7 +258,7 @@ def admin():
       return render_template(
          'admin/admin.html',
          nicks=nicks,
-         users=users,
+         users=users_qr,
          sold=sold,
          on_sale=on_sale,
          ctv=ctv,
@@ -268,40 +269,48 @@ def admin():
 
 @app.route('/add-nick', methods=['POST'])
 def add_nick():
-   # try:
-   name = request.form.get('name')
-   price = request.form.get('price')
-   game_type = request.form.get('gameType')
-   images = request.files['files']
-   # if game_type=='LQ':
-   game_name = 'Liên Quân'
-   game_id = 1
-   data = {
-      "rank": request.form.get('rank'),
-      "tuong": request.form.get('slTuong'),
-      "ngoc": request.form.get('ngoc'),
-      "da_quy": request.form.get('daQuy')
-   }
-   nick = models.Nicks()
-   nick.name = name
-   nick.price = price
-   nick.status = 'Confirm'
-   nick.game_name = game_name
-   nick.game_info = json.dumps(data)
-   nick.code = 'LQ-098754'
-   nick.create_at = str(datetime.datetime.now())
-   nick.images = ''
-   nick.game_id = game_id
-   nick.user_id = user_id
-   session.add(nick)
-   session.commit()
-   session.close()
+   try:
+      name = request.form.get('name')
+      price = request.form.get('price')
+      game_type = request.form.get('gameType')
+      images = request.files['files']
+      if game_type=='LQ':
+         game_name = 'Liên Quân'
+         data = {
+            "rank": request.form.get('rank'),
+            "tuong": request.form.get('slTuong'),
+            "skin": request.form.get('Skin'),
+            "ngoc": request.form.get('ngoc'),
+            "da_quy": request.form.get('daQuy')
+         }
+      else:
+         game_name = 'Ngọc Rồng'
+         data = {
+            "nickType": request.form.get('nickType'),
+            "server": request.form.get('server'),
+            "hanhTinh": request.form.get('hanhTinh'),
+            "bongTai": request.form.get('bongTai'),
+            "deTu": request.form.get('deTu')
+         }
+      nick = models.Nicks()
+      nick.name = name
+      nick.price = price
+      nick.status = 'Đang bán'
+      nick.game_name = game_name
+      nick.game_info = json.dumps(data)
+      nick.code = 'LQ-' + str(int(datetime.datetime.utcnow().timestamp()))
+      nick.create_at = str(datetime.datetime.now())
+      nick.images = ''
+      nick.user_id = user_id
+      session.add(nick)
+      session.commit()
+      session.close()
 
-   flash('Đăng ký bán nick thành công!')  
-   # except Exception as e:
-   #    flash(e)
-   #    flash('Hệ thống lỗi, nhờ báo cáo sự cố với bộ phận kỹ thuật.')
-   return redirect("/profile")
+      flash('Đăng ký bán nick thành công!')  
+   except Exception as e:
+      flash(e)
+      flash('Hệ thống lỗi, nhờ báo cáo sự cố với bộ phận kỹ thuật.')
+   return redirect("/admin")
 
 if __name__ == '__main__':
    app.run(debug = True)
