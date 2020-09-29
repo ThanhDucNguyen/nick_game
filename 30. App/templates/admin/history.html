@@ -32,10 +32,10 @@
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
-        <a href="{{ url_for('admin')}}" style="color: #FE2E2E; font-weight: 600;" class="nav-link">Nicks</a>
+        <a href="{{ url_for('admin')}}" class="nav-link">Nicks</a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
-        <a href="{{ url_for('admin_ctv')}}" class="nav-link">CTV</a>
+        <a style="color: #FE2E2E; font-weight: 600;" href="{{ url_for('admin_ctv')}}" class="nav-link">CTV</a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
         <a href="" class="nav-link">History</a>
@@ -136,20 +136,17 @@
           </div>
           <!-- /.col -->
         </div>
-        <!-- Main row -->
         <div class="row">
-          <!-- Left col -->
           <div class="col-md-12">
-            <!-- TABLE: LATEST ORDERS -->
+            <!-- PRODUCT LIST -->
             <div class="card">
-              <div class="card-header border-transparent">
-                <div class="row"></div>
-                <h3 class="card-title">Danh sách nick bán</h3>
-                <button type="button" id="banNickModal" style="margin: 0 0 10px 45%;" class="btn btn-outline-success" >Đăng ký bán nick</button>
-                <div id="myModal" class="modal col-md-5" style="margin: 25px 25% 0 25%;">
+              <div class="card-header border-0">
+                <h3 class="card-title">Lịch sử </h3>
+                <button type="button" id="addUserModal" style="margin: 0 0 10px 40%;" class="btn btn-outline-success" >Đăng ký CTV</button>
+                <div id="modalAddUser" class="modal col-md-5" style="margin: 25px 25% 0 25%;">
                   <!-- Modal content -->
                   <div class="modal-content">
-                    <h4 style="margin: 15px 15px;"><span id="closeModal" class="close">&times;</span>Hãy thêm thông tin bán Nick của bạn!</h4>
+                    <h4 style="margin: 15px 15px;"><span id="closeModalAddUser" class="close">&times;</span>Hãy thêm thông tin bán Nick của bạn!</h4>
                     <div class="row-group">
                         <form style="margin: 0 0 25px 0;" method="POST" role="form" action="{{url_for('add_nick')}}" enctype=multipart/form-data>
                           <div class="form-row">
@@ -185,7 +182,7 @@
                                 </label>
                               </div>
                           </div>
-                          <div class="form-row lienQuan" id="lienQuan" style="display: none;">
+                          <div class="form-row" id="lienQuan" style="display: none;">
                             <div class="form-group col-md-2">
                               <label for="rank">Rank</label>
                               <input type="text" class="form-control" name="rank" id="rank">
@@ -207,7 +204,7 @@
                               <input type="number" class="form-control" name="daQuy" id="daQuy">
                             </div>
                           </div>
-                          <div class="form-row ngocRong" id="ngocRong" style="display: none;">
+                          <div class="form-row" id="ngocRong" style="display: none;">
                             <div class="form-group col-md-6">
                               <label for="nickType">Loại nick</label>
                               <select id="nickType" name="nickType" class="form-control">
@@ -264,179 +261,56 @@
                   </div>
                 </div>
                 <div class="card-tools">
-                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                    <i class="fas fa-minus"></i>
-                  </button>
-                  <button type="button" class="btn btn-tool" data-card-widget="remove">
-                    <i class="fas fa-times"></i>
-                  </button>
+                  <a href="#" class="btn btn-tool btn-sm">
+                    <i class="fas fa-download"></i>
+                  </a>
+                  <a href="#" class="btn btn-tool btn-sm">
+                    <i class="fas fa-bars"></i>
+                  </a>
                 </div>
               </div>
-              <!-- /.card-header -->
-              <div class="card-body p-0">
-                <div class="table-responsive">
-                  <table class="table m-0" id="table-nicks">
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>name</th>
-                        <th>game</th>
-                        <th>price</th>
-                        <th>user</th>
-                        <th>status</th>
-                        <th style="text-align: center;">Option</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {% for nick in nicks %}
-                      <tr>
-                        <td><a href="#">{{ nick.code }}</a></td>
-                        <td>{{ nick.name }}</td>
-                        <td style="font-weight: 600; color: green;">{{ nick.game_name }}</td>
-                        <td>{{ nick.price }}<span> vnd</span></td>
-                        <td><a href="#">{{ nick.user["name"] }}</a></td>
-                        {% if nick.status=="Đã bán" %}
-                          <td><span class="badge badge-primary">Đã bán</span></td>
-                        {% elif nick.status=="Đang bán" %}
-                          <td><span class="badge badge-success">Đang bán</span></td>
-                        {% elif nick.status=="Error" %}
-                          <td><span class="badge badge-danger">Error</span></td>
-                        {% else %}
-                        <td><span class="badge badge-warning">Dừng</span></td>
-                        {% endif %}
-                        <td style="text-align: center;">
-                          <button class="btn btn-warning" onclick="editNick({{nick}});">Edit</button>
-                          <button class="btn btn-danger">Delete</button>
-                        </td>
-                        <div id="modalEditNick{{nick.id}}" class="modal col-md-5" style="margin: 25px 25% 0 25%;">
-                          <!-- Modal content -->
-                          <div class="modal-content">
-                            <h4 style="margin: 15px 15px;"><span id="closeModalEditNick{{nick.id}}" onclick="closeModalEditNick({{nick}});" class="close">&times;</span>Hãy thêm thông tin bán Nick của bạn!</h4>
-                            <div class="row-group">
-                                <form style="margin: 0 0 25px 0;" method="POST" role="form" action="{{url_for('add_nick')}}" enctype=multipart/form-data>
-                                  <input type="hidden" class="form-control" value="{{nick.id}}" name="id" id="id">
-                                  <div class="form-row">
-                                      <div class="form-group col-md-12">
-                                        <label for="name">Tên thông tin muốn bán <span style="color: #ff0000;">(Bắt buộc *)</span></label>
-                                        <input type="text" class="form-control" value="{{ nick.name }}" name="name" id="name">
-                                      </div>
-                                  </div>
-                                  <div class="form-row">
-                                      <div class="form-group col-md-6">
-                                      <label for="price" style="color: green;">Giá tiền <span style="color: #ff0000;">(Bắt buộc *)</span></label>
-                                      <input type="number" class="form-control" value="{{ nick.price }}" name="price" id="price" placeholder="500.000">
-                                      </div>
-                                      <div class="form-group col-md-6">
-                                        <label style="color: blue;">Loại game <span style="color: #ff0000;">(Bắt buộc *)</span></label>
-                                        <select name="gameTypeEdit" class="form-control">
-                                          <option value="">Vui lòng chọn...</option>
-                                          <option value="LQ" {{ 'selected' if nick.game_name == 'Liên Quân' else '' }}>Liên Quân</option>
-                                          <option value="NR" {{ 'selected' if nick.game_name == 'Ngọc Rồng' else '' }}>Ngọc Rồng</option>
-                                        </select>
-                                      </div>
-                                  </div>
-                                  <div class="form-row">
-                                      <div class="form-group col-md-12">
-                                        <label for="name" style="font-weight: bold;">Hãy tải lên những hình ảnh mô tả cho nick của bạn</label>
-                                        <input type="file" class="form-control" style="font-size: 0.8rem;" name="files" id="files" multiple>
-                                      </div>
-                                  </div>
-                                  <div class="form-group">
-                                      <div class="form-check">
-                                        <label class="form-check-label" for="gridCheck" style="margin-left: 20px; color: #180cb8;">
-                                            Thông tin nick game
-                                        </label>
-                                      </div>
-                                  </div>
-                                  {% if nick.game_name == 'Liên Quân' %}
-                                  <div class="form-row lienQuanEdit">
-                                    <div class="form-group col-md-2">
-                                      <label for="rank">Rank</label>
-                                      <input type="text" class="form-control" name="rank" id="rank">
-                                    </div>
-                                    <div class="form-group col-md-2">
-                                      <label for="slTuong">Số lượng tướng</label>
-                                      <input type="number" class="form-control" name="slTuong" id="slTuong">
-                                    </div>
-                                    <div class="form-group col-md-3">
-                                      <label for="Skin">Skin</label>
-                                      <input type="number" class="form-control" name="Skin" id="Skin">
-                                    </div>
-                                    <div class="form-group col-md-3">
-                                      <label for="ngoc">Ngọc 90</label>
-                                      <input type="number" class="form-control" name="ngoc" id="ngoc">
-                                    </div>
-                                    <div class="form-group col-md-3">
-                                      <label for="daQuy">Đá Quý</label>
-                                      <input type="number" class="form-control" name="daQuy" id="daQuy">
-                                    </div>
-                                  </div>
-                                  {% elif nick.game_name == 'Ngọc Rồng' %}
-                                  <div class="form-row ngocRongEdit">
-                                    <div class="form-group col-md-6">
-                                      <label for="nickType">Loại nick</label>
-                                      <select id="nickType" name="nickType" class="form-control">
-                                        <option value="" selected>Vui lòng chọn...</option>
-                                        <option value="Tầm Trung">Tầm Trung</option>
-                                        <option value="Sơ Sinh">Sơ Sinh</option>
-                                        <option value="Thường">Thường</option>
-                                      </select>
-                                    </div>
-                                    <div class="form-group col-md-3">
-                                      <label for="server">Server</label>
-                                      <select id="server" name="server" class="form-control">
-                                        <option value="" selected>Vui lòng chọn...</option>
-                                        {% for i in range(1, 10) %}
-                                        <option value="{{ i }}">{{ i }}</option>
-                                        {% endfor %}
-                                      </select>
-                                    </div>
-                                    <div class="form-group col-md-3">
-                                      <label for="hanhTinh">Hành tinh</label>
-                                      <select id="hanhTinh" name="hanhTinh" class="form-control">
-                                        <option value="" selected>Vui lòng chọn...</option>
-                                        <option value="Trái Đất">Trái Đất</option>
-                                        <option value="Trái Đất">Xayda</option>
-                                        <option value="Trái Đất">Namek</option>
-                                      </select>
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                      <label for="bongTai">Bông tai</label>
-                                      <div class="form-check" style="margin-left: 10%;">
-                                        <input class="form-check-input" type="checkbox" id="bongTai">
-                                        <label class="form-check-label" for="bongTai" style="margin-left: 20px;">
-                                            Có bông tai
-                                        </label>
-                                      </div>
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                      <label for="deTu">Đệ tử</label>
-                                      <div class="form-check" style="margin-left: 10%;">
-                                        <input class="form-check-input" type="checkbox" id="deTu">
-                                        <label class="form-check-label" for="deTu" style="margin-left: 20px;">
-                                            Có đệ tử
-                                        </label>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  {% endif %}
-                                  <div class="form-row" style="margin-top: 25px; border-top: 1px solid #cccccc;">
-                                    <div class="form-group" style="margin: 15px 43%;">
-                                      <button type="submit" class="btn btn-success">Đăng ký</button>
-                                    </div>
-                                  </div>
-                                </form>
-                            </div>
-                          </div>
-                        </div>
-                      </tr>
-                      {% endfor %}
-                    </tbody>
-                  </table>
-                </div>
-                <!-- /.table-responsive -->
+              <div class="card-body table-responsive p-0">
+                <table class="table table-striped table-valign-middle" id="table-ctv">
+                  <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Nicks Sale</th>
+                    <th>Money</th>
+                    <th>Request</th>
+                    <th>Status</th>
+                    <th style="text-align: center;">Option</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {% for user in ctv %}
+                  <tr>
+                    <td><a href="">{{ user.name }}</a></td>
+                    {% if user.ctv %}
+                    <td>CTV</td>
+                    {% else %}
+                    <td style="padding-left: 22px;"> - </td>
+                    {% endif %}
+                    <td>5</td>
+                    <td>{{ user.money }}<span> VND</span></td>
+                    {% if user["request"] %}
+                    <td>
+                      <span class="badge bg-danger"><span>{{ user["request"] }}</span> Request</span>
+                    </td>
+                    {% else %}
+                    <td style="padding-left: 45px;"> - </td>
+                    {% endif %}
+                    <td><span class="badge badge-success">Hoạt động</span></td>
+                    <td style="text-align: center;">
+                      <a href="#" class="btn btn-warning">Edit</a>
+                      <a href="#" class="btn btn-danger">Delete</a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                  
+                  </tbody>
+                </table>
               </div>
-              <!-- /.card-footer -->
             </div>
             <!-- /.card -->
           </div>
@@ -493,17 +367,8 @@
   
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
 <script>
-  function editNick(nick) {
-    var id = "#modalEditNick" + nick['id']
-    $(id).show();
-  }
-  function closeModalEditNick(nick) {
-    var id = "#modalEditNick" + nick['id']
-    $(id).hide();
-  }
   $(document).ready(function() {
-      $("#table-user").DataTable();
-      $("#table-nicks").DataTable();
+      $("#table-ctv").DataTable();
       $("#banNickModal").click(function() {
         $("#myModal").show();
       });
@@ -512,32 +377,17 @@
         $("#modalAddUser").show();
       });
 
-      $("select[name=gameType]").change(function() {
-        var game_type = $("select[name=gameType]").val();
+      $("#gameType").change(function() {
+        var game_type = $("#gameType").val();
         if (game_type == 'LQ') {
-          $(".lienQuan").show();
-          $(".ngocRong").hide();
+          $("#lienQuan").show();
+          $("#ngocRong").hide();
         } else if (game_type == 'NR') {
-          $(".ngocRong").show();
-          $(".lienQuan").hide();
+          $("#ngocRong").show();
+          $("#lienQuan").hide();
         } else {
-          $(".ngocRong").hide();
-          $(".lienQuan").hide();
-        }
-      });
-
-      $("select[name=gameTypeEdit]").change(function() {
-        var game_type = $("select[name=gameTypeEdit]").val();
-        alert(game_type)
-        if (game_type == 'LQ') {
-          $(".lienQuanEdit").show();
-          $(".ngocRongEdit").hide();
-        } else if (game_type == 'NR') {
-          $(".ngocRongEdit").show();
-          $(".lienQuanEdit").hide();
-        } else {
-          $(".ngocRongEdit").hide();
-          $(".lienQuanEdit").hide();
+          $("#ngocRong").hide();
+          $("#lienQuan").hide();
         }
       });
 

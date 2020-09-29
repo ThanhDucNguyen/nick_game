@@ -206,7 +206,7 @@ def login_admin_process():
 @login_required
 def admin():
    per = checkPermisson()
-   if per:
+   if per == 'admin':
       nicks_qr = session.query(models.Nicks).all()
 
       # Get info nicks
@@ -240,32 +240,60 @@ def admin():
       for user in users_qr:
          if user.ctv:
             ctv.append(user)
-         if user.enduser:
+         elif user.enduser:
             enduser.append(user)
          
          # Convert users data
-         list_request = session.query(models.History).filter(
-            models.History.user_id == user.id, models.History.status == "Confirm").all()
-         list_nick = session.query(models.Nicks).filter(models.Nicks.user_id == user.id).all()
-         data = {
-            "id": user.id,
-            "name": user.name,
-            "ctv": user.ctv,
-            "nick_sale": len(list_nick),
-            "money": user.money,
-            "request": len(list_request)
-         }
+         # list_request = session.query(models.History).filter(
+         #    models.History.user_id == user.id, models.History.status == "Confirm").all()
+         # list_nick = session.query(models.Nicks).filter(models.Nicks.user_id == user.id).all()
+         # data = {
+         #    "id": user.id,
+         #    "name": user.name,
+         #    "ctv": user.ctv,
+         #    "nick_sale": len(list_nick),
+         #    "money": user.money,
+         #    "request": len(list_request)
+         # }
+      
       return render_template(
          'admin/admin.html',
          nicks=nicks,
-         users=users_qr,
          sold=sold,
          on_sale=on_sale,
          ctv=ctv,
          enduser=enduser)
+   elif per == 'ctv':
+      nicks_qr = session.query(models.Nicks).filter(models.Nicks.user_id == current_user.id).all()
+      # Get info nicks
+      sold = []
+      on_sale = []
+      nicks = []
+      for nick in nicks_qr:
+         if nick.status == 'Đang bán':
+            on_sale.append(nick)
+         if nick.status == 'Đã bán':
+            sold.append(nick)
+
+         # Convert nicks data
+         user = session.query(models.Users).filter(models.Users.id == nick.user_id).first()
+         data = {
+            "id": nick.id,
+            "code": nick.code,
+            "name": nick.name,
+            "game_name": nick.game_name,
+            "price": nick.price,
+            "user": { "name": user.name, "id": user.id },
+            "status": nick.status
+         }
+         nicks.append(data)
+      return render_template(
+         'admin/admin.html',
+         nicks=nicks,
+         sold=sold,
+         on_sale=on_sale)
    else:
       return redirect("/")
-
 
 @app.route('/add-nick', methods=['POST'])
 def add_nick():
@@ -311,6 +339,108 @@ def add_nick():
       flash(e)
       flash('Hệ thống lỗi, nhờ báo cáo sự cố với bộ phận kỹ thuật.')
    return redirect("/admin")
+
+@app.route('/admin-ctv')
+def admin_ctv():
+   # Get info nicks
+   nicks_qr = session.query(models.Nicks).all()
+   sold = []
+   on_sale = []
+   nicks = []
+   for nick in nicks_qr:
+      if nick.status == 'Đang bán':
+         on_sale.append(nick)
+      if nick.status == 'Đã bán':
+         sold.append(nick)
+
+      # Convert nicks data
+      user = session.query(models.Users).filter(models.Users.id == nick.user_id).first()
+      data = {
+         "id": nick.id,
+         "code": nick.code,
+         "name": nick.name,
+         "game_name": nick.game_name,
+         "price": nick.price,
+         "user": { "name": user.name, "id": user.id },
+         "status": nick.status
+      }
+      nicks.append(data)
+
+   # Get info users
+   ctv = []
+   enduser = []
+   users = []
+   users_qr = session.query(models.Users).filter(models.Users.super == False).all()
+   for user in users_qr:
+      if user.ctv:
+         ctv.append(user)
+      elif user.enduser:
+         enduser.append(user)
+   return render_template('admin/ctv.html', nicks=nicks, sold=sold, on_sale=on_sale, ctv=ctv, enduser=enduser)
+
+@app.route('/add-ctv', methods=['POST'])
+def add_ctv():
+   try:
+      name = request.form.get('name')
+      account_tk = request.form.get('account_tk')
+      password = request.form.get('password')
+      
+      user = models.Users()
+      user.name = name
+      user.account_tk = account_tk
+      user.ctv = True
+      user.super = False
+      user.enduser = False
+      user.password = password
+      user.create_at = str(datetime.datetime.now())
+      session.add(user)
+
+      session.commit()
+      session.close()
+
+      flash('Tạo ctv thành công!')
+   except Exception as e:
+      flash(e)
+      flash('Hệ thống lỗi, nhờ báo cáo sự cố với bộ phận kỹ thuật.')
+   return redirect("/admin-ctv")
+
+@app.route('/admin-history')
+def admin_history():
+   # Get info nicks
+   nicks_qr = session.query(models.Nicks).all()
+   sold = []
+   on_sale = []
+   nicks = []
+   for nick in nicks_qr:
+      if nick.status == 'Đang bán':
+         on_sale.append(nick)
+      if nick.status == 'Đã bán':
+         sold.append(nick)
+
+      # Convert nicks data
+      user = session.query(models.Users).filter(models.Users.id == nick.user_id).first()
+      data = {
+         "id": nick.id,
+         "code": nick.code,
+         "name": nick.name,
+         "game_name": nick.game_name,
+         "price": nick.price,
+         "user": { "name": user.name, "id": user.id },
+         "status": nick.status
+      }
+      nicks.append(data)
+
+   # Get info users
+   ctv = []
+   enduser = []
+   users = []
+   users_qr = session.query(models.Users).filter(models.Users.super == False).all()
+   for user in users_qr:
+      if user.ctv:
+         ctv.append(user)
+      elif user.enduser:
+         enduser.append(user)
+   return render_template('admin/ctv.html', nicks=nicks, sold=sold, on_sale=on_sale, ctv=ctv, enduser=enduser)
 
 if __name__ == '__main__':
    app.run(debug = True)
