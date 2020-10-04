@@ -1,0 +1,85 @@
+﻿{% extends 'web/base.html' %}
+
+{% block container %}
+   <div class="c-layout-page" style="margin-top: 15px;">
+      <div class="container">
+         <section class="main">
+            <div class="blockContent">
+               <div class=" right-seperate">
+                  <div class="card-game-panel">
+                     <div class="row">
+                           <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
+                              <div class="product-images"><span class="product-label new-exist"><span class="product-label-new">new</span></span>
+                                 <img src="{{ list_image[0] }}" alt="Tấm ốp tường - ốp trần trong nhà CI121O" class="img-responsive">
+                              </div>
+                           </div>
+                           <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                              <div class="product-info">
+                                 <div class="info-block" style="font-size: 17px;">
+                                    <ul>
+                                       <li>
+                                          <h1 itemprop="name">Nick Game - Liên quân Mobile</h1>
+                                       </li>
+                                       <li>
+                                          <span>{{ data.name }}</span>
+                                       </li>
+                                       <li class="price-big"  style="margin-top: 25px;">
+                                          <ul class="list_attribute">
+                                             <li>Giá tiền: <span style="font-size: 20px; color: #f42f2c;">{{ data.price }}đ</span></li>
+                                             <li>Trạng thái: 
+                                                {% if data.status == 'Confirm' %}
+                                                   <strong style="color: #f42f2c;">Đợi hệ thống xác nhận</strong>
+                                                {% elif data.status == 'Đang bán' %}
+                                                   <strong style="color: blue;">Đang bán</strong>
+                                                {% else %}
+                                                   <strong style="color: #28a745;">Đã bán</strong>
+                                                {% endif %}
+                                             </li>
+                                             <li>Mã số: <strong>{{ data.code }}</strong></li>
+                                          </ul>
+                                          {% if data.game_id == 1 %}
+                                          <ul class="list_attribute" style="margin-top: 5px;">
+                                             <li>Rank: <span style="font-size: 18px; color: #28a745;">Kim cương</span></li>
+                                             <li>Ngọc 90: <strong>Không</strong></li>
+                                             <li>Đá quý: <strong>Không</strong></li>
+                                          </ul>
+                                          {% endif %}
+                                       </li>
+                                       <li>
+                                          <ul class="list_attribute">
+                                             <li><button type="button" class="btn btn-primary">Mua ngay</button></li>
+                                             <li style="margin-top: 10px;">
+                                                   <a href="#"><p style="color: #dc3545;">Liên hệ fanpage để được tư vấn!</p></a>
+                                             </li>
+                                          </ul>
+                                       </li>
+                                    </ul>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="c-content-divider">
+                           <i class="icon-dot"></i>
+                     </div>
+                     <h2 class="panel-title">Đổi thẻ cào</h2>
+                     <p></p>
+                     <p>☘<strong>&nbsp;Cam kết không nuốt thẻ, không làm lag web đối tác khi kết nối API. </strong></p>
+                     <p>☘ Nghiêm cấm&nbsp;sử dụng<strong> thẻ cào trộm cắp, lừa đảo...</strong>&nbsp;nếu sử dụng&nbsp;sẽ khoá tài khoản.</p>
+                     <p>- Trường hợp chọn Sai mệnh giá sẽ chấp nhận theo mệnh giá nhỏ hơn. Và phạt 10% số tiền nhận được</p>
+                     <p></p>
+                     <div class="form-frontpage form-sm" style="margin-top: 30px;">
+                        {% for image in list_image %}
+                        <p>
+                           <img src="{{ image }}" class="zoom">
+                        </p>
+                        {% endfor %}
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </section>
+      </div>
+      <!-- END: PAGE CONTENT -->
+   </div>
+{% endblock %}
+      

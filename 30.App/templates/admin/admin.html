@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+  <title>Admin - GameTongHop.Vn</title>
+
+  <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+  <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="../../static/admin/plugins/fontawesome-free/css/all.min.css">
+  <!-- overlayScrollbars -->
+  <link rel="stylesheet" href="../../static/admin/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="../../static/admin/dist/css/adminlte.min.css">
+  <!-- Google Font: Source Sans Pro -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+  <style>
+    .form-row {
+      margin: 0 20px;
+    }
+  </style>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<div class="wrapper">
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light" style="margin-left: 0;">
+    <!-- /.navbar -->
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+      </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="{{ url_for('admin')}}" style="color: #FE2E2E; font-weight: 600;" class="nav-link">Nicks</a>
+      </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="{{ url_for('admin_ctv')}}" class="nav-link">CTV</a>
+      </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="" class="nav-link">History</a>
+      </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="" class="nav-link">Người dùng</a>
+      </li>
+    </ul>
+
+    <!-- Right navbar links -->
+    <ul class="navbar-nav ml-auto">
+      <!-- Notifications Dropdown Menu -->
+      <li class="nav-item dropdown">
+        <div class="user-panel mt-1 pb-1 mb-1 d-flex">
+          <div class="image">
+            <img src="../../static/admin/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+          </div>
+          <div class="info">{{ current_user.name }}</div>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <div class="user-panel mt-1 pb-1 mb-1 d-flex">
+          <div class="info"><a href="{{ url_for('logout')}}">Logout</a></div>
+        </div>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper" style="margin-top: calc(4.5rem + 1px); margin-left:0;">
+    <section class="content">
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+          {% for message in messages %}
+          <div class="alert alert-warning alert-dismissible" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+              {{message}}
+          </div>
+          {% endfor %}
+      {% endif %}
+      {% endwith %}
+      
+      {% block body %}{% endblock %}
+      <div class="container-fluid">
+        <!-- Info boxes -->
+        <div class="row">
+          <div class="col-12 col-sm-6 col-md-3">
+            <div class="info-box">
+              <span class="info-box-icon bg-info elevation-1"><i class="fas fa-cog"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-text"><a href="#" style="color: #212529;">CTV</a></span>
+                <span class="info-box-number">{{ ctv | length }}</span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+          <!-- /.col -->
+          <div class="col-12 col-sm-6 col-md-3">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-success elevation-1"><i class="fas fa-shopping-cart"></i></span>
+              <div class="info-box-content">
+                <span class="info-box-text">Nick đang bán</span>
+                <span class="info-box-number">{{ on_sale | length }}</span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+          <!-- /.col -->
+
+          <!-- fix for small devices only -->
+          <div class="clearfix hidden-md-up"></div>
+
+          <div class="col-12 col-sm-6 col-md-3">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-thumbs-up"></i></span>
+              <div class="info-box-content">
+                <span class="info-box-text">Nick đã bán</span>
+                <span class="info-box-number">{{ sold | length }}</span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+          <!-- /.col -->
+          <div class="col-12 col-sm-6 col-md-3">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
+              <div class="info-box-content">
+                <span class="info-box-text">Số lượng người dùng</span>
+                <span class="info-box-number">{{ enduser | length }}</span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- Main row -->
+        <div class="row">
+          <!-- Left col -->
+          <div class="col-md-12">
+            <!-- TABLE: LATEST ORDERS -->
+            <div class="card">
+              <div class="card-header border-transparent">
+                <div class="row"></div>
+                <h3 class="card-title">Danh sách nick bán</h3>
+                <button type="button" id="banNickModal" style="margin: 0 0 10px 5%;" class="btn btn-outline-success" >Đăng ký bán nick</button>
+                <div id="myModal" class="modal col-md-5" style="margin: 25px 25% 0 25%;">
+                  <!-- Modal content -->
+                  <div class="modal-content">
+                    <h4 style="margin: 15px 15px;"><span id="closeModal" class="close">&times;</span>Hãy thêm thông tin bán Nick của bạn!</h4>
+                    <div class="row-group">
+                        <form style="margin: 0 0 25px 0;" method="POST" role="form" action="{{url_for('add_nick')}}" enctype=multipart/form-data>
+                          <div class="form-row">
+                              <div class="form-group col-md-12">
+                                <label for="name">Tên thông tin muốn bán <span style="color: #ff0000;">(Bắt buộc *)</span></label>
+                                <input type="text" class="form-control" name="name" id="name">
+                              </div>
+                          </div>
+                          <div class="form-row">
+                            <div class="form-group col-md-6">
+                            <label for="price" style="color: green;">Giá tiền <span style="color: #ff0000;">(Bắt buộc *)</span></label>
+                            <input type="number" class="form-control" name="price" id="price" placeholder="500.000">
+                            </div>
+                            <div class="form-group col-md-6">
+                              <label for="gameType" style="color: blue;">Loại game <span style="color: #ff0000;">(Bắt buộc *)</span></label>
+                              <select id="gameType" name="gameType" class="form-control">
+                                <option value="" selected>Vui lòng chọn...</option>
+                                <option value="LQ">Liên Quân</option>
+                                <option value="NR">Ngọc Rồng</option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="form-row">
+                            <div class="form-group col-md-6">
+                              <label for="price" style="color: blue;">Tài khoản nick <span style="color: #ff0000;">(Bắt buộc *)</span></label>
+                              <input type="text" class="form-control" name="account" id="account" placeholder="taikhoana">
+                            </div>
+                            <div class="form-group col-md-6">
+                              <label for="gameType" style="color: green;">Password <span style="color: #ff0000;">(Bắt buộc *)</span></label>
+                              <input type="password" class="form-control" name="password" id="password" placeholder="*********">
+                            </div>
+                          </div>
+                          <div class="form-row">
+                              <div class="form-group col-md-12">
+                                <label for="name" style="font-weight: bold;">Hãy tải lên những hình ảnh mô tả cho nick của bạn</label>
+                                <input type="file" class="form-control" style="font-size: 0.8rem;" name="files" id="files" multiple>
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <div class="form-check">
+                                <label class="form-check-label" for="gridCheck" style="margin-left: 20px; color: #180cb8;">
+                                    Thông tin nick game
+                                </label>
+                              </div>
+                          </div>
+                          <div class="form-row lienQuan" id="lienQuan" style="display: none;">
+                            <div class="form-group col-md-2">
+                              <label for="rank">Rank</label>
+                              <input type="text" class="form-control" name="rank" id="rank">
+                            </div>
+                            <div class="form-group col-md-2">
+                              <label for="slTuong">Số lượng tướng</label>
+                              <input type="number" class="form-control" name="slTuong" id="slTuong">
+                            </div>
+                            <div class="form-group col-md-3">
+                              <label for="Skin">Skin</label>
+                              <input type="number" class="form-control" name="Skin" id="Skin">
+                            </div>
+                            <div class="form-group col-md-3">
+                              <label for="ngoc">Ngọc 90</label>
+                              <input type="number" class="form-control" name="ngoc" id="ngoc">
+                            </div>
+                            <div class="form-group col-md-3">
+                              <label for="daQuy">Đá Quý</label>
+                              <input type="number" class="form-control" name="daQuy" id="daQuy">
+                            </div>
+                          </div>
+                          <div class="form-row ngocRong" id="ngocRong" style="display: none;">
+                            <div class="form-group col-md-6">
+                              <label for="nickType">Loại nick</label>
+                              <select id="nickType" name="nickType" class="form-control">
+                                <option value="" selected>Vui lòng chọn...</option>
+                                <option value="Tầm Trung">Tầm Trung</option>
+                                <option value="Sơ Sinh">Sơ Sinh</option>
+                                <option value="Thường">Thường</option>
+                              </select>
+                            </div>
+                            <div class="form-group col-md-3">
+                              <label for="server">Server</label>
+                              <select id="server" name="server" class="form-control">
+                                <option value="" selected>Vui lòng chọn...</option>
+                                {% for i in range(1, 10) %}
+                                <option value="{{ i }}">{{ i }}</option>
+                                {% endfor %}
+                              </select>
+                            </div>
+                            <div class="form-group col-md-3">
+                              <label for="hanhTinh">Hành tinh</label>
+                              <select id="hanhTinh" name="hanhTinh" class="form-control">
+                                <option value="" selected>Vui lòng chọn...</option>
+                                <option value="Trái Đất">Trái Đất</option>
+                                <option value="Trái Đất">Xayda</option>
+                                <option value="Trái Đất">Namek</option>
+                              </select>
+                            </div>
+                            <div class="form-group col-md-6">
+                              <label for="bongTai">Bông tai</label>
+                              <div class="form-check" style="margin-left: 10%;">
+                                <input class="form-check-input" type="checkbox" name="bongTai" id="bongTai">
+                                <label class="form-check-label" for="bongTai" style="margin-left: 20px;">
+                                    Có bông tai
+                                </label>
+                              </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                              <label for="deTu">Đệ tử</label>
+                              <div class="form-check" style="margin-left: 10%;">
+                                <input class="form-check-input" type="checkbox" name="deTu" id="deTu">
+                                <label class="form-check-label" for="deTu" style="margin-left: 20px;">
+                                    Có đệ tử
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="form-row" style="margin-top: 25px; border-top: 1px solid #cccccc;">
+                            <div class="form-group" style="margin: 15px 43%;">
+                              <button type="submit" class="btn btn-success">Đăng ký</button>
+                            </div>
+                          </div>
+                        </form>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                  <button type="button" class="btn btn-tool" data-card-widget="remove">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+                <div class="table-responsive">
+                  <table class="table m-0" id="table-nicks">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>name</th>
+                        <th>game</th>
+                        <th>price</th>
+                        <th>user</th>
+                        <th>status</th>
+                        <th style="text-align: center;">Option</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for nick in nicks %}
+                      <tr>
+                        <td><a href="#">{{ nick.code }}</a></td>
+                        <td>{{ nick.name }}</td>
+                        <td style="font-weight: 600; color: green;">{{ nick.game_name }}</td>
+                        <td>{{ nick.price }}<span> vnd</span></td>
+                        <td><a href="#">{{ nick.user["name"] }}</a></td>
+                        {% if nick.status=="Đã bán" %}
+                          <td><span class="badge badge-primary">Đã bán</span></td>
+                        {% elif nick.status=="Đang bán" %}
+                          <td><span class="badge badge-success">Đang bán</span></td>
+                        {% elif nick.status=="Error" %}
+                          <td><span class="badge badge-danger">Error</span></td>
+                        {% else %}
+                        <td><span class="badge badge-warning">Dừng</span></td>
+                        {% endif %}
+                        <td style="text-align: center;">
+                          <button class="btn btn-warning" onclick="editNick({{nick.id}});">Edit</button>
+                          <button class="btn btn-danger">Delete</button>
+                        </td>
+                        <div id="modalEditNick{{nick.id}}" class="modal col-md-5" style="margin: 25px 25% 0 25%;">
+                          <!-- Modal content -->
+                          <div class="modal-content" style="max-height: 800px; overflow: auto;">
+                            <h4 style="margin: 15px 15px;"><span id="closeModalEditNick{{nick.id}}" onclick="closeModalEditNick({{nick.id}});" class="close">&times;</span>Hãy thêm thông tin bán Nick của bạn!</h4>
+                            <div class="row-group">
+                                <form style="margin: 0 0 25px 0;" method="POST" role="form" action="{{url_for('edit_nick')}}" enctype=multipart/form-data>
+                                  <input type="hidden" class="form-control" value="{{nick.id}}" name="id" id="id">
+                                  <div class="form-row">
+                                      <div class="form-group col-md-12">
+                                        <label for="name">Tên thông tin muốn bán <span style="color: #ff0000;">(Bắt buộc *)</span></label>
+                                        <input type="text" class="form-control" value="{{ nick.name }}" name="name" id="name">
+                                      </div>
+                                  </div>
+                                  <div class="form-row">
+                                      <div class="form-group col-md-6">
+                                      <label for="price" style="color: green;">Giá tiền <span style="color: #ff0000;">(Bắt buộc *)</span></label>
+                                      <input type="number" class="form-control" value="{{ nick.price }}" name="price" id="price" placeholder="500.000">
+                                      </div>
+                                      <div class="form-group col-md-6">
+                                        <label style="color: blue;">Loại game <span style="color: #ff0000;">(Bắt buộc *)</span></label>
+                                        <select name="gameTypeEdit" class="form-control">
+                                          <option value="">Vui lòng chọn...</option>
+                                          <option value="LQ" {{ 'selected' if nick.game_name == 'Liên Quân' else '' }}>Liên Quân</option>
+                                          <option value="NR" {{ 'selected' if nick.game_name == 'Ngọc Rồng' else '' }}>Ngọc Rồng</option>
+                                        </select>
+                                      </div>
+                                  </div>
+                                  <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                      <label for="price" style="color: blue;">Tài khoản nick <span style="color: #ff0000;">(Bắt buộc *)</span></label>
+                                      <input type="text" class="form-control" name="account" id="account" value="{{ nick.game_info['account'] }}" placeholder="taikhoana">
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                      <label for="gameType" style="color: green;">Password <span style="color: #ff0000;">(Bắt buộc *)</span></label>
+                                      <input type="password" class="form-control" name="password" id="password" value="{{ nick.game_info['password'] }}" placeholder="*********">
+                                    </div>
+                                  </div>
+                                  <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                      <label for="name" style="font-weight: bold;">Hãy tải lên những hình ảnh mô tả cho nick của bạn</label>
+                                    </div>
+                                  </div>
+                                  <div class="form-row">
+                                    {% for image in nick.images %}
+                                    <div class="form-group col-md-4">
+                                      <img src="{{ image }}" width="200px" class="zoom">
+                                    </div>
+                                    {% endfor %}
+                                  </div>
+                                  <div class="form-row">
+                                      <div class="form-group col-md-12">
+                                        <input type="file" class="form-control" style="font-size: 0.8rem;" name="files" id="files" multiple>
+                                      </div>
+                                  </div>
+                                  <div class="form-group">
+                                      <div class="form-check">
+                                        <label class="form-check-label" for="gridCheck" style="margin-left: 20px; color: #180cb8;">
+                                            Thông tin nick game
+                                        </label>
+                                      </div>
+                                  </div>
+                                  {% if nick.game_name == 'Liên Quân' %}
+                                  <div class="form-row lienQuanEdit">
+                                    <div class="form-group col-md-2">
+                                      <label for="rank">Rank</label>
+                                      <input type="text" class="form-control" name="rank" id="rank" value="{{ nick.game_info['rank'] }}">
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                      <label for="slTuong">Số lượng tướng</label>
+                                      <input type="number" class="form-control" name="slTuong" value="{{ nick.game_info['tuong'] }}" id="slTuong">
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                      <label for="Skin">Skin</label>
+                                      <input type="number" class="form-control" name="Skin" id="Skin" value="{{ nick.game_info['skin'] }}">
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                      <label for="ngoc">Ngọc 90</label>
+                                      <input type="number" class="form-control" name="ngoc" id="ngoc" value="{{ nick.game_info['ngoc'] }}">
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                      <label for="daQuy">Đá Quý</label>
+                                      <input type="number" class="form-control" name="daQuy" id="daQuy" value="{{ nick.game_info['da_quy'] }}">
+                                    </div>
+                                  </div>
+                                  {% elif nick.game_name == 'Ngọc Rồng' %}
+                                  <div class="form-row ngocRongEdit">
+                                    <div class="form-group col-md-6">
+                                      <label for="nickType">Loại nick</label>
+                                      <select id="nickType" name="nickType" class="form-control">
+                                        <option value="">Vui lòng chọn...</option>
+                                        <option value="Tầm Trung" {{ 'selected' if nick.game_info['nickType'] == 'Tầm Trung' else '' }}>Tầm Trung</option>
+                                        <option value="Sơ Sinh" {{ 'selected' if nick.game_info['nickType'] == 'Sơ Sinh' else '' }}>Sơ Sinh</option>
+                                        <option value="Thường" {{ 'selected' if nick.game_info['nickType'] == 'Thường' else '' }}>Thường</option>
+                                      </select>
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                      <label for="server">Server</label>
+                                      <select id="server" name="server" class="form-control">
+                                        <option value="" selected>Vui lòng chọn...</option>
+                                        {% for i in range(1, 10) %}
+                                        <option value="{{ i }}" {{ 'selected' if nick.game_info['server'] == i|string else '' }}>{{ i }}</option>
+                                        {% endfor %}
+                                      </select>
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                      <label for="hanhTinh">Hành tinh</label>
+                                      <select id="hanhTinh" name="hanhTinh" class="form-control">
+                                        <option value="" selected>Vui lòng chọn...</option>
+                                        <option value="Trái Đất" {{ 'selected' if nick.game_info['hanhTinh'] == 'Trái Đất' else '' }}>Trái Đất</option>
+                                        <option value="Xayda" {{ 'selected' if nick.game_info['hanhTinh'] == 'Xayda' else '' }}>Xayda</option>
+                                        <option value="Namek" {{ 'selected' if nick.game_info['hanhTinh'] == 'Namek' else '' }}>Namek</option>
+                                      </select>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                      <label for="bongTai">Bông tai</label>
+                                      <div class="form-check" style="margin-left: 10%;">
+                                        <input class="form-check-input" type="checkbox" id="bongTai" {{ 'checked' if nick.game_info['bongTai'] else '' }}>
+                                        <label class="form-check-label" for="bongTai" style="margin-left: 20px;">
+                                            Có bông tai
+                                        </label>
+                                      </div>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                      <label for="deTu">Đệ tử</label>
+                                      <div class="form-check" style="margin-left: 10%;">
+                                        <input class="form-check-input" type="checkbox" id="deTu" {{ 'checked' if nick.game_info['deTu'] else '' }}>
+                                        <label class="form-check-label" for="deTu" style="margin-left: 20px;">
+                                            Có đệ tử
+                                        </label>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  {% endif %}
+                                  <div class="form-row" style="margin-top: 25px; border-top: 1px solid #cccccc;">
+                                    <div class="form-group" style="margin: 15px 43%;">
+                                      <button type="submit" class="btn btn-success">Update</button>
+                                    </div>
+                                  </div>
+                                </form>
+                            </div>
+                          </div>
+                        </div>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+                <!-- /.table-responsive -->
+              </div>
+              <!-- /.card-footer -->
+            </div>
+            <!-- /.card -->
+          </div>
+        </div>
+        <!-- /.row -->
+      </div><!--/. container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer" style="margin-left: 0;">
+    <strong>Copyright &copy; 2014-2019 <a href="http://adminlte.io">AdminLTE.io</a>.</strong>
+    All rights reserved.
+    <div class="float-right d-none d-sm-inline-block">
+      <b>Version</b> 3.0.5
+    </div>
+  </footer>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED SCRIPTS -->
+<!-- jQuery -->
+<script src="../../static/admin/plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap -->
+<script src="../../static/admin/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- overlayScrollbars -->
+<script src="../../static/admin/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+<!-- AdminLTE App -->
+<script src="../../static/admin/dist/js/adminlte.js"></script>
+
+<!-- OPTIONAL SCRIPTS -->
+<script src="../../static/admin/dist/js/demo.js"></script>
+
+<!-- PAGE PLUGINS -->
+<!-- jQuery Mapael -->
+<script src="../../static/admin/plugins/jquery-mousewheel/jquery.mousewheel.js"></script>
+<script src="../../static/admin/plugins/raphael/raphael.min.js"></script>
+<script src="../../static/admin/plugins/jquery-mapael/jquery.mapael.min.js"></script>
+<script src="../../static/admin/plugins/jquery-mapael/maps/usa_states.min.js"></script>
+<!-- ChartJS -->
+<script src="../../static/admin/plugins/chart.js/Chart.min.js"></script>
+
+<!-- PAGE SCRIPTS -->
+<script src="../../static/admin/dist/js/pages/dashboard2.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
+  
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
+<script>
+  function editNick(id) {
+    id = "#modalEditNick" + id
+    $(id).show();
+  }
+  function closeModalEditNick(id) {
+    id = "#modalEditNick" + id
+    $(id).hide();
+  }
+  $(document).ready(function() {
+      $("#table-user").DataTable();
+      $("#table-nicks").DataTable();
+      $("#banNickModal").click(function() {
+        $("#myModal").show();
+      });
+
+      $("#addUserModal").click(function() {
+        $("#modalAddUser").show();
+      });
+
+      $("select[name=gameType]").change(function() {
+        var game_type = $("select[name=gameType]").val();
+        if (game_type == 'LQ') {
+          $(".lienQuan").show();
+          $(".ngocRong").hide();
+        } else if (game_type == 'NR') {
+          $(".ngocRong").show();
+          $(".lienQuan").hide();
+        } else {
+          $(".ngocRong").hide();
+          $(".lienQuan").hide();
+        }
+      });
+
+      $("select[name=gameTypeEdit]").change(function() {
+        var game_type = $("select[name=gameTypeEdit]").val();
+        if (game_type == 'LQ') {
+          $(".lienQuanEdit").show();
+          $(".ngocRongEdit").hide();
+        } else if (game_type == 'NR') {
+          $(".ngocRongEdit").show();
+          $(".lienQuanEdit").hide();
+        } else {
+          $(".ngocRongEdit").hide();
+          $(".lienQuanEdit").hide();
+        }
+      });
+
+     $("#closeModal").click(function() {
+        $("#myModal").hide();
+     });
+
+     $("#closeModalAddUser").click(function() {
+        $("#modalAddUser").hide();
+     });
+  });
+</script>
+</body>
+</html>
