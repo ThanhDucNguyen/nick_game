@@ -316,7 +316,9 @@
                         {% endif %}
                         <td style="text-align: center;">
                           <button class="btn btn-warning" onclick="editNick({{nick.id}});">Edit</button>
-                          <button class="btn btn-danger">Delete</button>
+                          <a href="{{ url_for('delete_nick', id=nick.id)}}">
+                            <button class="btn btn-danger">Delete</button>
+                          </a>
                         </td>
                         <div id="modalEditNick{{nick.id}}" class="modal col-md-5" style="margin: 25px 25% 0 25%;">
                           <!-- Modal content -->
@@ -451,6 +453,15 @@
                                     </div>
                                   </div>
                                   {% endif %}
+                                  <div class="form-group col-md-6">
+                                    <label for="status">Trạng thái</label>
+                                    <select id="status" name="status" class="form-control">
+                                      <option value="Xác nhận" {{ 'selected' if nick.status == 'Xác nhận' else '' }}>Xác nhận</option>
+                                      <option value="Đang bán" {{ 'selected' if nick.status == 'Đang bán' else '' }}>Đang bán</option>
+                                      <option value="Đã bán" {{ 'selected' if nick.status == 'Đã bán' else '' }}>Đã bán</option>
+                                      <option value="Error" {{ 'selected' if nick.status == 'Error' else '' }}>Error</option>
+                                    </select>
+                                  </div>
                                   <div class="form-row" style="margin-top: 25px; border-top: 1px solid #cccccc;">
                                     <div class="form-group" style="margin: 15px 43%;">
                                       <button type="submit" class="btn btn-success">Update</button>

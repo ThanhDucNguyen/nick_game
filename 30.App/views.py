@@ -310,7 +310,31 @@ def add_nick():
    name = request.form.get('name')
    price = request.form.get('price')
    game_type = request.form.get('gameType')
-   code  = 'LQ-' + str(int(datetime.datetime.utcnow().timestamp()))
+
+   code = ''
+   # Game Info
+   if game_type=='LQ':
+      code  = 'LQ-' + str(int(datetime.datetime.utcnow().timestamp()))
+      game_name = 'Liên Quân'
+      data = {
+         "account": request.form.get('account'),
+         "password": request.form.get('password'),
+         "rank": request.form.get('rank'),
+         "tuong": request.form.get('slTuong'),
+         "skin": request.form.get('Skin'),
+         "ngoc": request.form.get('ngoc'),
+         "da_quy": request.form.get('daQuy')
+      }
+   else:
+      code  = 'NR-' + str(int(datetime.datetime.utcnow().timestamp()))
+      game_name = 'Ngọc Rồng'
+      data = {
+         "nickType": request.form.get('nickType'),
+         "server": request.form.get('server'),
+         "hanhTinh": request.form.get('hanhTinh'),
+         "bongTai": True if request.form.get('bongTai') == 'on' else False,
+         "deTu": True if request.form.get('deTu') == 'on' else False
+      }
 
    path = app.config['UPLOAD_FOLDER'] + code
    os.mkdir(path)
@@ -331,34 +355,13 @@ def add_nick():
          file_name = common.upload_file(image, path)
          list_image.append(os.path.join(UPLOAD_FOLDER + code, image.filename))
 
-   # Game Info
-   if game_type=='LQ':
-      game_name = 'Liên Quân'
-      data = {
-         "account": request.form.get('account'),
-         "password": request.form.get('password'),
-         "rank": request.form.get('rank'),
-         "tuong": request.form.get('slTuong'),
-         "skin": request.form.get('Skin'),
-         "ngoc": request.form.get('ngoc'),
-         "da_quy": request.form.get('daQuy')
-      }
-   else:
-      game_name = 'Ngọc Rồng'
-      data = {
-         "nickType": request.form.get('nickType'),
-         "server": request.form.get('server'),
-         "hanhTinh": request.form.get('hanhTinh'),
-         "bongTai": True if request.form.get('bongTai') == 'on' else False,
-         "deTu": True if request.form.get('deTu') == 'on' else False
-      }
    nick = models.Nicks()
    nick.name = name
    nick.price = price
-   nick.status = 'Đang bán'
+   nick.status = 'Xác nhận'
    nick.game_name = game_name
    nick.game_info = json.dumps(data)
-   nick.code = 'LQ-' + str(int(datetime.datetime.utcnow().timestamp()))
+   nick.code = code
    nick.create_at = str(datetime.datetime.now())
    nick.images = ','.join(list_image)
    nick.user_id = current_user.id
@@ -383,10 +386,31 @@ def edit_nick():
    price = request.form.get('price')
    nick.price = price
    game_type = request.form.get('gameType')
-   code  = 'LQ-' + str(int(datetime.datetime.utcnow().timestamp()))
 
-   path = app.config['UPLOAD_FOLDER'] + code
-   os.mkdir(path)
+   code = ''
+   # Game Info
+   if game_type=='LQ':
+      code  = 'LQ-' + str(int(datetime.datetime.utcnow().timestamp()))
+      game_name = 'Liên Quân'
+      data = {
+         "account": request.form.get('account'),
+         "password": request.form.get('password'),
+         "rank": request.form.get('rank'),
+         "tuong": request.form.get('slTuong'),
+         "skin": request.form.get('Skin'),
+         "ngoc": request.form.get('ngoc'),
+         "da_quy": request.form.get('daQuy')
+      }
+   else:
+      code  = 'NR-' + str(int(datetime.datetime.utcnow().timestamp()))
+      game_name = 'Ngọc Rồng'
+      data = {
+         "nickType": request.form.get('nickType'),
+         "server": request.form.get('server'),
+         "hanhTinh": request.form.get('hanhTinh'),
+         "bongTai": True if request.form.get('bongTai') == 'on' else False,
+         "deTu": True if request.form.get('deTu') == 'on' else False
+      }
 
    # Image
    if 'files' not in request.files:
@@ -401,35 +425,16 @@ def edit_nick():
             if image.filename == '':
                nick.images = nick.images
             else:
+               path = app.config['UPLOAD_FOLDER'] + code
+               os.mkdir(path)
                file_name = common.upload_file(image, path)
                list_image.append(os.path.join(UPLOAD_FOLDER + code, image.filename))
                nick.images = ','.join(list_image)
 
-   # Game Info
-   if game_type=='LQ':
-      game_name = 'Liên Quân'
-      data = {
-         "account": request.form.get('account'),
-         "password": request.form.get('password'),
-         "rank": request.form.get('rank'),
-         "tuong": request.form.get('slTuong'),
-         "skin": request.form.get('Skin'),
-         "ngoc": request.form.get('ngoc'),
-         "da_quy": request.form.get('daQuy')
-      }
-   else:
-      game_name = 'Ngọc Rồng'
-      data = {
-         "nickType": request.form.get('nickType'),
-         "server": request.form.get('server'),
-         "hanhTinh": request.form.get('hanhTinh'),
-         "bongTai": True if request.form.get('bongTai') == 'on' else False,
-         "deTu": True if request.form.get('deTu') == 'on' else False
-      }
-   nick.status = 'Đang bán'
+   nick.status = request.form.get('status')
    nick.game_name = game_name
    nick.game_info = json.dumps(data)
-   nick.code = 'LQ-' + str(int(datetime.datetime.utcnow().timestamp()))
+   nick.code = code
    nick.create_at = str(datetime.datetime.now())
    nick.user_id = current_user.id
    session.merge(nick)
@@ -441,6 +446,16 @@ def edit_nick():
    #    flash(e)
    #    flash('Hệ thống lỗi, nhờ báo cáo sự cố với bộ phận kỹ thuật.')
    #    redirect("/admin")
+   return redirect("/admin")
+
+@app.route('/delete-nick-<id>')
+@login_required
+def delete_nick(id):
+   try:
+      session.query(models.Nicks).filter(models.Nicks.id == int(id)).delete()
+      flash('Xóa thông tin bán nick thành công!')
+   except Exception as e:
+      flash('Hệ thống lỗi, nhờ báo cáo sự cố với bộ phận kỹ thuật.')
    return redirect("/admin")
 
 @app.route('/admin-ctv')
