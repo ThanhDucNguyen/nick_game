@@ -35,13 +35,10 @@
         <a href="{{ url_for('admin')}}" style="color: #FE2E2E; font-weight: 600;" class="nav-link">Nicks</a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
-        <a href="{{ url_for('admin_ctv')}}" class="nav-link">CTV</a>
+        <a href="{{ url_for('admin_ctv')}}" class="nav-link">Request</a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
         <a href="{{ url_for('admin_history')}}" class="nav-link">History</a>
-      </li>
-      <li class="nav-item d-none d-sm-inline-block">
-        <a href="{{ url_for('admin_user')}}" class="nav-link">Người dùng</a>
       </li>
     </ul>
 
@@ -82,20 +79,8 @@
       <div class="container-fluid">
         <!-- Info boxes -->
         <div class="row">
-          <div class="col-12 col-sm-6 col-md-3">
-            <div class="info-box">
-              <span class="info-box-icon bg-info elevation-1"><i class="fas fa-cog"></i></span>
-
-              <div class="info-box-content">
-                <span class="info-box-text"><a href="#" style="color: #212529;">CTV</a></span>
-                <span class="info-box-number">{{ ctv | length }}</span>
-              </div>
-              <!-- /.info-box-content -->
-            </div>
-            <!-- /.info-box -->
-          </div>
           <!-- /.col -->
-          <div class="col-12 col-sm-6 col-md-3">
+          <div class="col-12 col-sm-6 col-md-6">
             <div class="info-box mb-3">
               <span class="info-box-icon bg-success elevation-1"><i class="fas fa-shopping-cart"></i></span>
               <div class="info-box-content">
@@ -111,24 +96,12 @@
           <!-- fix for small devices only -->
           <div class="clearfix hidden-md-up"></div>
 
-          <div class="col-12 col-sm-6 col-md-3">
+          <div class="col-12 col-sm-6 col-md-6">
             <div class="info-box mb-3">
               <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-thumbs-up"></i></span>
               <div class="info-box-content">
                 <span class="info-box-text">Nick đã bán</span>
                 <span class="info-box-number">{{ sold | length }}</span>
-              </div>
-              <!-- /.info-box-content -->
-            </div>
-            <!-- /.info-box -->
-          </div>
-          <!-- /.col -->
-          <div class="col-12 col-sm-6 col-md-3">
-            <div class="info-box mb-3">
-              <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
-              <div class="info-box-content">
-                <span class="info-box-text">Số lượng người dùng</span>
-                <span class="info-box-number">{{ enduser | length }}</span>
               </div>
               <!-- /.info-box-content -->
             </div>
@@ -292,7 +265,6 @@
                         <th>name</th>
                         <th>game</th>
                         <th>price</th>
-                        <th>user</th>
                         <th>status</th>
                         <th style="text-align: center;">Option</th>
                       </tr>
@@ -304,7 +276,6 @@
                         <td>{{ nick.name }}</td>
                         <td style="font-weight: 600; color: green;">{{ nick.game_name }}</td>
                         <td>{{ nick.price }}<span> vnd</span></td>
-                        <td><a href="#">{{ nick.user["name"] }}</a></td>
                         {% if nick.status=="Đã bán" %}
                           <td><span class="badge badge-primary">Đã bán</span></td>
                         {% elif nick.status=="Đang bán" %}
