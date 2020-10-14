@@ -617,6 +617,39 @@ def admin_history():
          data.append(history)
 
       return render_template('admin/history.html', data=data, nicks=nicks, sold=sold, on_sale=on_sale, ctv=ctv, enduser=enduser)
+   elif per == 'ctv':
+      # Get info nicks
+      nicks = session.query(models.Nicks).filter(models.Nicks.user_id == current_user.id).order_by(desc(models.Nicks.id)).all()
+      sold = []
+      on_sale = []
+      for nick in nicks:
+         if nick.status == 'Đang bán':
+            on_sale.append(nick)
+         if nick.status == 'Đã bán':
+            sold.append(nick)
+      
+      historys = session.query(models.History).filter(
+         models.History.user_id == current_user.id,
+         models.History.card == False,
+         models.History.buy == False).all()
+      data = []
+      for his in historys:
+         # Convert nicks data
+         user = session.query(models.Users).filter(models.Users.id == his.user_id).first()
+         history = {
+            "id": his.id,
+            "card": his.card,
+            "buy": his.buy,
+            "info": json.loads(his.info),
+            "create_at": his.create_at,
+            "status": his.status
+         }
+         data.append(history)
+      return render_template(
+         'admin/ctv-request.html',
+         historys=data,
+         sold=sold,
+         on_sale=on_sale)
    else:
       return redirect("/error")
 
@@ -661,6 +694,34 @@ def admin_user():
       return render_template('admin/user.html', nicks=nicks, sold=sold, on_sale=on_sale, ctv=ctv, enduser=enduser)
    else:
       return redirect("/error")
+
+@app.route('/request', methods=['POST'])
+def request():
+   # try:
+   price = request.form.get('price')
+   description = request.form.get('description')
+   
+   history = models.History()
+   history.create_at = str(datetime.datetime.now())
+   history.card = False
+   history.buy = False
+   history.user_id = current_user.id
+   history.status = 'Confirm'
+   data = {
+      "price": price,
+      "description": description
+   }
+   history.info = json.dumps(data)
+
+   session.add(history)
+   session.commit()
+   session.close()
+
+   flash('Request rút tiền thành công!')
+   # except Exception as e:
+   #    flash(e)
+   #    flash('Hệ thống lỗi, nhờ báo cáo sự cố với bộ phận kỹ thuật.')
+   return redirect("/admin-ctv")
 
 if __name__ == '__main__':
    app.run(debug = True)
