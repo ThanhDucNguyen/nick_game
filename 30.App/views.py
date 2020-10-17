@@ -466,30 +466,15 @@ def admin_ctv():
    per = checkPermisson()
    if per == 'admin':
       # Get info nicks
-      nicks_qr = session.query(models.Nicks).all()
+      nicks = session.query(models.Nicks).all()
       sold = []
       on_sale = []
       nicks = []
-      for nick in nicks_qr:
+      for nick in nicks:
          if nick.status == 'Đang bán':
             on_sale.append(nick)
          if nick.status == 'Đã bán':
             sold.append(nick)
-
-         # Convert nicks data
-         user = session.query(models.Users).filter(models.Users.id == nick.user_id).first()
-         historys = session.query(models.History).filter(models.History.user_id == nick.user_id).all()
-         data = {
-            "id": nick.id,
-            "code": nick.code,
-            "name": nick.name,
-            "sale": len(historys),
-            "game_name": nick.game_name,
-            "price": nick.price,
-            "user": { "name": user.name, "id": user.id },
-            "status": nick.status
-         }
-         nicks.append(data)
 
       # Get info users
       ctv = []
@@ -498,7 +483,36 @@ def admin_ctv():
       users_qr = session.query(models.Users).filter(models.Users.super == False).all()
       for user in users_qr:
          if user.ctv:
-            ctv.append(user)
+            historys = session.query(models.History).filter(
+               models.History.user_id == user.id,
+               models.History.card == False,
+               models.History.buy == False
+            ).all()
+            ctv_sale = session.query(models.Nicks).filter(models.Nicks.user_id == user.id).all()
+            request_info = []
+            for history in historys:
+               info = json.loads(history.info)
+               request = {
+                  "id": history.id,
+                  "price": info["price"],
+                  "descripton": info["description"]
+               }
+               request_info.append(request)
+            data = {
+               "id": user.id,
+               "name": user.name,
+               "account_tk": user.account_tk,
+               "super": user.super,
+               "ctv": user.ctv,
+               "enduser": user.enduser,
+               "create_at": user.create_at,
+               "password": user.password,
+               "money": user.money,
+               "request": len(historys),
+               "request_info": request_info,
+               "sale": len(ctv_sale)
+            }
+            ctv.append(data)
          elif user.enduser:
             enduser.append(user)
       return render_template('admin/ctv.html', nicks=nicks, sold=sold, on_sale=on_sale, ctv=ctv, enduser=enduser)
@@ -696,32 +710,38 @@ def admin_user():
       return redirect("/error")
 
 @app.route('/request', methods=['POST'])
-def request():
-   # try:
-   price = request.form.get('price')
-   description = request.form.get('description')
-   
-   history = models.History()
-   history.create_at = str(datetime.datetime.now())
-   history.card = False
-   history.buy = False
-   history.user_id = current_user.id
-   history.status = 'Confirm'
-   data = {
-      "price": price,
-      "description": description
-   }
-   history.info = json.dumps(data)
+def request_salary():
+   try:
+      price = request.form.get('price')
+      description = request.form.get('description')
+      
+      history = models.History()
+      history.create_at = str(datetime.datetime.now())
+      history.card = False
+      history.buy = False
+      history.user_id = current_user.id
+      history.status = 'Confirm'
+      data = {
+         "price": price,
+         "description": description
+      }
+      history.info = json.dumps(data)
+      user = session.query(models.Users).filter(models.Users.id == int(current_user.id)).first()
+      if int(user.money) < int(price):
+         flash('Số tiền trong tài khoản của bạn không đủ!')
+      else:
+         user.money = int(user.money) - int(price)
+         session.merge(user)
+         session.commit()
+         session.close()
 
-   session.add(history)
-   session.commit()
-   session.close()
-
-   flash('Request rút tiền thành công!')
-   # except Exception as e:
-   #    flash(e)
-   #    flash('Hệ thống lỗi, nhờ báo cáo sự cố với bộ phận kỹ thuật.')
-   return redirect("/admin-ctv")
+         session.add(history)
+         session.commit()
+         session.close()
+         flash('Request rút tiền thành công!')
+   except Exception as e:
+      flash('Hệ thống lỗi, nhờ báo cáo sự cố với bộ phận kỹ thuật.')
+   return redirect("/admin-history")
 
 if __name__ == '__main__':
    app.run(debug = True)

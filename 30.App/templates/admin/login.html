@@ -39,7 +39,7 @@
 		{% endwith %}
 		
 		{% block body %}{% endblock %}
-      <form method="post" role="form" action="{{url_for('login_admin_process')}}">
+      <form method="post" method="POST" role="form" action="{{url_for('login_admin_process')}}">
         <div class="input-group mb-3">
           <input type="text" class="form-control" name="username" placeholder="Tài khoản">
           <div class="input-group-append">
