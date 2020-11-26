@@ -182,15 +182,22 @@
                         <td>{{ history.info['description'] }}</td>
                         {% if history.status == 'Confirm' %}
                         <td><span class="badge badge-primary">{{ history.status }}</span></td>
-                        {% else %}
-                        <td><span class="badge badge-warning">{{ history.status }}</span></td>
-                        {% endif %}
                         <td style="text-align: center;">
                           <button class="btn btn-warning" onclick="editNick({{history.id}});">Edit</button>
                           <a href="{{ url_for('delete_nick', id=history.id)}}">
                             <button class="btn btn-danger">Delete</button>
                           </a>
                         </td>
+                        {% else %}
+                        <td><span class="badge badge-warning">{{ history.status }}</span></td>
+                        <td style="text-align: center;">
+                          <button class="btn btn-warning" disabled>Edit</button>
+                          <a>
+                            <button class="btn btn-danger" disabled>Delete</button>
+                          </a>
+                        </td>
+                        {% endif %}
+                        
                         <div id="modalEditNick{{history.id}}" class="modal col-md-5" style="margin: 25px 25% 0 25%;">
                           <!-- Modal content -->
                           <!-- <div class="modal-content" style="max-height: 800px; overflow: auto;">

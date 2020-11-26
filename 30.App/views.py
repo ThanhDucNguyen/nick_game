@@ -486,7 +486,8 @@ def admin_ctv():
             historys = session.query(models.History).filter(
                models.History.user_id == user.id,
                models.History.card == False,
-               models.History.buy == False
+               models.History.buy == False,
+               models.History.status == 'Confirm'
             ).all()
             ctv_sale = session.query(models.Nicks).filter(models.Nicks.user_id == user.id).all()
             request_info = []
@@ -742,6 +743,21 @@ def request_salary():
    except Exception as e:
       flash('Hệ thống lỗi, nhờ báo cáo sự cố với bộ phận kỹ thuật.')
    return redirect("/admin-history")
+
+@app.route('/confirm-request', methods=['POST'])
+def confirm_request():
+   try:
+      id = request.form.get("id")
+      history = session.query(models.History).filter(
+         models.History.id == id).first()
+      history.status = "Processed"
+      session.merge(history)
+      session.commit()
+      session.close()
+      flash("Xử lý request thành công!")
+   except Exception as e:
+      flash('Hệ thống lỗi, nhờ báo cáo sự cố với bộ phận kỹ thuật.')
+   return redirect("/admin-ctv")
 
 if __name__ == '__main__':
    app.run(debug = True)

@@ -218,24 +218,25 @@
                       <div class="modal-content">
                         <h4 style="margin: 15px 15px;"><span id="closeModalConfirmRequest{{user.id}}" onclick="closeModalConfirmRequest({{user.id}});" class="close">&times;</span>Hãy update thông tin bán CTV của bạn!</h4>
                         <div class="row-group">
-                            <form style="margin: 0 0 25px 0;" method="POST" role="form" action="{{url_for('edit_user')}}" enctype=multipart/form-data>
-                              {% for request in user['request_info'] %}
+                          {% for request in user['request_info'] %}
+                          <div class="form-row">
+                            <form style="margin: 0 0 25px 0;" method="POST" action="{{url_for('confirm_request')}}" role="form" enctype=multipart/form-data>
                               <input type="hidden" class="form-control" name="id" value="{{request.id}}">
-                              <div class="form-row">
-                                <div class="form-group col-md-5">
-                                  <label>Họ & Tên <span style="color: #ff0000;">(Bắt buộc *)</span></label>
-                                  <input type="text" class="form-control" name="name" value="{{request['price']}}">
-                                </div>
-                                <div class="form-group col-md-5">
-                                  <label>Họ & Tên <span style="color: #ff0000;">(Bắt buộc *)</span></label>
-                                  <input type="text" class="form-control" name="name" value="{{request['price']}}">
-                                </div>
-                                <div class="form-group col-md-5">
-                                  <button type="submit" class="btn btn-success">Tạo</button>
-                                </div>
+                              <div class="form-group col-md-5">
+                                <label>Họ & Tên <span style="color: #ff0000;">(Bắt buộc *)</span></label>
+                                <input type="text" class="form-control" name="name" value="{{request['price']}}">
                               </div>
-                              {% endfor %}
+                              <div class="form-group col-md-5">
+                                <label>Họ & Tên <span style="color: #ff0000;">(Bắt buộc *)</span></label>
+                                <input type="text" class="form-control" name="name" value="{{request['price']}}">
+                              </div>
+                              <div class="form-group col-md-2">
+                                <label>----</label>
+                                <button type="submit" class="form-control btn btn-success">Confirm</button>
+                              </div>
                             </form>
+                          </div>
+                          {% endfor %}
                         </div>
                       </div>
                     </div>
