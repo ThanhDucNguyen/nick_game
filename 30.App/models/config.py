@@ -9,7 +9,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref, sessionmaker
 from sqlalchemy.sql.expression import exists
 
-engine = create_engine('mysql+pymysql://root:12345678@localhost/nickgame', echo=False)
+# engine = create_engine('mysql+pymysql://root:12345678@localhost/nickgame', echo=False)
+engine = create_engine('mysql+pymysql://hwapxlsr_bkhost:KDC5DE5b@localhost/hwapxlsr_bkhost', echo=False)
 Base = declarative_base()
 Session = sessionmaker(bind=engine)
 session = Session()
